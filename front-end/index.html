@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dern-Support - Professional Texnik Yordam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e3f2fd;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #2c3e50;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Landing Page Styles */
+        .landing-container {
+            display: none;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .landing-header {
+            background: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #2c3e50;
+            border: 1px solid #ced4da;
+        }
+
+        .btn-outline:hover {
+            background: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+            border: 1px solid #3498db;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .hero-section {
+            padding: 120px 2rem 80px;
+            text-align: center;
+            background: white;
+            margin-top: 80px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            color: #2c3e50;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .features-section {
+            background: #f8f9fa;
+            padding: 80px 2rem;
+        }
+
+        .features-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .feature-description {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 80px 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .cta-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn-cta {
+            background: #3498db;
+            color: white;
+            border: 1px solid #3498db;
+        }
+
+        .btn-cta:hover {
+            background: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Error state */
+        .error-container {
+            display: none;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: #f8f9fa;
+        }
+
+        .error-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            max-width: 500px;
+            border: 1px solid #e9ecef;
+        }
+
+        .error-title {
+            color: #dc3545;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .error-message {
+            color: #6c757d;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .error-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+
+        .error-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-section {
+                padding: 100px 1rem 60px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .features-section,
+            .cta-section {
+                padding: 60px 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Loading Screen -->
+<div id="loadingScreen" class="loading-screen">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Tizim yuklanmoqda...</div>
+</div>
+
+<!-- Landing Page -->
+<div id="landingContainer" class="landing-container">
+    <!-- Header -->
+    <header class="landing-header">
+        <div class="header-content">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+                Dern-Support
+            </div>
+            <div class="nav-buttons">
+                <a href="login.html" class="btn btn-outline">Kirish</a>
+                <a href="register.html" class="btn btn-primary">Ro'yxatdan o'tish</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Professional Texnik Yordam Xizmati</h1>
+            <p class="hero-subtitle">
+                Bizning tajribali mutaxassislarimiz sizning barcha texnik muammolaringizni tezkor va sifatli hal qilishga tayyor.
+                24/7 xizmat va professional yondashuv bilan ishonchli hamkor.
+            </p>
+            <div class="hero-buttons">
+                <a href="register.html" class="btn btn-primary btn-large">Bepul boshlash</a>
+                <a href="#features" class="btn btn-outline btn-large">Batafsil ma'lumot</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="features-content">
+            <h2 class="section-title">Bizning xizmatlarimiz</h2>
+            <p class="section-subtitle">
+                Professional texnik yordam xizmatlarining to'liq spektri bilan tanishing
+            </p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2"/>
+                            <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3" stroke="currentColor" stroke-width="2"/>
+                            <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">24/7 Yordam</h3>
+                    <p class="feature-description">
+                        Kun va tunda istalgan vaqtda professional yordam olish imkoniyati.
+                        Bizning mutaxassislarimiz doimo sizning xizmatingizdalar.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Tajribali Mutaxassislar</h3>
+                    <p class="feature-description">
+                        Ko'p yillik tajribaga ega professional mutaxassislar jamoasi.
+                        Har qanday murakkablikdagi masalalarni hal qilishga qodir.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Tezkor Xizmat</h3>
+                    <p class="feature-description">
+                        Muammolaringizni eng qisqa vaqt ichida hal qilish.
+                        Samarali yechimlar va tezkor javob berish bizning ustuvorligimiz.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Xavfsizlik Kafolati</h3>
+                    <p class="feature-description">
+                        Ma'lumotlaringiz xavfsizligi va maxfiyligini ta'minlash.
+                        Zamonaviy xavfsizlik standartlari va shifrlash texnologiyalari.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 3v18h18" stroke="currentColor" stroke-width="2"/>
+                            <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Monitoring va Tahlil</h3>
+                    <p class="feature-description">
+                        Tizimlaringizni doimiy monitoring qilish va tahlil qilish.
+                        Muammolarni oldindan aniqlash va oldini olish.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="3.27,6.96 12,12.01 20.73,6.96" stroke="currentColor" stroke-width="2"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Keng Qamrovli Yechimlar</h3>
+                    <p class="feature-description">
+                        Kompyuter, tarmoq, dasturiy ta'minot va boshqa texnik masalalar uchun
+                        kompleks yechimlar va professional maslahatlar.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2 class="cta-title">Bugun boshlaymizmi?</h2>
+            <p class="cta-subtitle">
+                Professional texnik yordam xizmatlaridan foydalanish uchun ro'yxatdan o'ting
+                va birinchi konsultatsiyani bepul oling.
+            </p>
+            <a href="register.html" class="btn btn-cta btn-large">Bepul ro'yxatdan o'tish</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Dern-Support. Barcha huquqlar himoyalangan.</p>
+        </div>
+    </footer>
+</div>
+
+<!-- Error Container -->
+<div id="errorContainer" class="error-container">
+    <div class="error-content">
+        <h2 class="error-title">Xatolik yuz berdi</h2>
+        <p class="error-message" id="errorMessage">Tizimga kirish uchun avval hisobingizga kiring.</p>
+        <a href="login.html" class="error-btn">Tizimga kirish</a>
+    </div>
+</div>
+
+<script>
+    // localStorage.clear()
+    // API konfiguratsiyasi
+    const API_BASE_URL = 'http://localhost:5000/api';
+
+    // Global o'zgaruvchilar
+    let currentUser = null;
+    let userRole = null;
+    let userId = null;
+    let authToken = null;
+
+    // Sahifa yuklanganda ishga tushadi
+    window.addEventListener('load', async function() {
+        console.log('Sahifa yuklandi, autentifikatsiya tekshirilmoqda...');
+        await initializeApplication();
+    });
+
+    // Asosiy dastur ishga tushirish funksiyasi
+    async function initializeApplication() {
+        try {
+            showLoading();
+            console.log('Dastur ishga tushirilmoqda...');
+
+            // 1. Token mavjudligini tekshirish
+            authToken = getStoredToken();
+
+            if (!authToken) {
+                console.log('Token topilmadi, landing page ko\'rsatiladi');
+                showLandingPage();
+                return;
+            }
+
+            console.log('Token topildi:', authToken.substring(0, 20) + '...');
+
+            // 2. Token haqiqiyligini va foydalanuvchi ma'lumotlarini tekshirish
+            const authData = await validateTokenAndGetUserData(authToken);
+
+            if (!authData || !authData.success) {
+                console.log('Token noto\'g\'ri yoki muddati tugagan');
+                clearAllUserData();
+                showError('Sessiya muddati tugagan. Iltimos, qayta kiring.');
+                return;
+            }
+
+            // 3. Foydalanuvchi ma'lumotlarini saqlash
+            currentUser = authData.user;
+            userRole = authData.role;
+            userId = authData.user.id;
+
+            console.log('Foydalanuvchi ma\'lumotlari:', {
+                id: userId,
+                fullname: currentUser.fullname,
+                email: currentUser.email,
+                role: userRole
+            });
+
+            // 4. Ma'lumotlarni localStorage'ga saqlash
+            updateLocalStorage(authData);
+
+            // 5. Role asosida dashboard'ga yo'naltirish
+            redirectToRoleDashboard(userRole);
+
+        } catch (error) {
+            console.error('Dastur ishga tushirishda xatolik:', error);
+            showError('Tizimda xatolik yuz berdi. Iltimos, qayta urinib ko\'ring.');
+        }
+    }
+
+    // Token olish funksiyasi
+    function getStoredToken() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.log('localStorage\'da token topilmadi');
+            return null;
+        }
+        return token;
+    }
+
+    // Token va foydalanuvchi ma'lumotlarini tekshirish
+    async function validateTokenAndGetUserData(token) {
+        try {
+            console.log('API\'dan foydalanuvchi ma\'lumotlari so\'ralmoqda...');
+
+            const response = await fetch(`${API_BASE_URL}/auth/role`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+
+            console.log('API javob holati:', response.status);
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    console.log('Token noto\'g\'ri (401 Unauthorized)');
+                    return { success: false, error: 'Unauthorized' };
+                } else if (response.status === 403) {
+                    console.log('Ruxsat yo\'q (403 Forbidden)');
+                    return { success: false, error: 'Forbidden' };
+                } else {
+                    console.log('Server xatoligi:', response.status);
+                    return { success: false, error: 'Server Error' };
+                }
+            }
+
+            const data = await response.json();
+            console.log('API\'dan kelgan ma\'lumotlar:', data);
+
+            // Ma'lumotlar to'g'riligini tekshirish
+            if (!data || !data.id || !data.role || !data.fullname || !data.email) {
+                console.error('API\'dan noto\'g\'ri ma\'lumotlar keldi:', data);
+                return { success: false, error: 'Invalid data format' };
+            }
+
+            // Saqlangan role bilan API dan kelgan role'ni solishtirish
+            const storedRole = localStorage.getItem('userRole');
+            if (storedRole && storedRole !== data.role) {
+                console.log('Role o\'zgargan: ' + storedRole + ' -> ' + data.role);
+                // Role o'zgargan, yangi token olish kerak
+                const newToken = await refreshTokenWithNewRole(token, data.id);
+                if (newToken) {
+                    // Yangi token saqlash
+                    localStorage.setItem('token', newToken);
+                    authToken = newToken;
+                    console.log('Token yangilandi');
+                }
+            }
+
+            return {
+                success: true,
+                user: {
+                    id: data.id,
+                    fullname: data.fullname,
+                    email: data.email
+                },
+                role: data.role
+            };
+
+        } catch (error) {
+            console.error('API so\'rovida xatolik:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    // Role o'zgarganda yangi token olish
+    async function refreshTokenWithNewRole(oldToken, userId) {
+        try {
+            console.log('Role o\'zgargani uchun yangi token so\'ralmoqda...');
+
+            const response = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${oldToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId })
+            });
+
+            if (!response.ok) {
+                console.error('Yangi token olishda xatolik:', response.status);
+                return null;
+            }
+
+            const data = await response.json();
+            if (!data.token) {
+                console.error('Yangi token olinmadi');
+                return null;
+            }
+
+            console.log('Yangi token olindi');
+            return data.token;
+        } catch (error) {
+            console.error('Yangi token olishda xatolik:', error);
+            return null;
+        }
+    }
+
+    // localStorage'ni yangilash
+    function updateLocalStorage(authData) {
+        try {
+            localStorage.setItem('user', JSON.stringify(authData.user));
+            localStorage.setItem('userRole', authData.role);
+            localStorage.setItem('userId', authData.user.id);
+            localStorage.setItem('loginTime', new Date().toISOString());
+
+            console.log('localStorage yangilandi');
+        } catch (error) {
+            console.error('localStorage\'ni yangilashda xatolik:', error);
+        }
+    }
+
+    // Role asosida dashboard'ga yo'naltirish
+    function redirectToRoleDashboard(role) {
+        console.log('Role asosida yo\'naltirish:', role);
+
+        let dashboardUrl = '';
+
+        switch(role.toLowerCase()) {
+            case 'admin':
+                dashboardUrl = 'admindashboard.html';
+                console.log('Admin dashboard\'ga yo\'naltirilmoqda');
+                break;
+
+            case 'usta':
+                dashboardUrl = '../front-end/usta_dashboard.html';
+                console.log('Usta dashboard\'ga yo\'naltirilmoqda');
+                break;
+
+            case 'user':
+                dashboardUrl = 'userdashboard.html';
+                console.log('User dashboard\'ga yo\'naltirilmoqda');
+                break;
+
+            default:
+                console.warn('Noma\'lum role:', role);
+                showError('Noma\'lum foydalanuvchi turi. Administrator bilan bog\'laning.');
+                return;
+        }
+
+        // Yo'naltirish
+        console.log('Yo\'naltirish URL:', dashboardUrl);
+        window.location.href = dashboardUrl;
+    }
+
+    // Barcha foydalanuvchi ma'lumotlarini tozalash
+    function clearAllUserData() {
+        try {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('loginTime');
+
+            // Global o'zgaruvchilarni tozalash
+            currentUser = null;
+            userRole = null;
+            userId = null;
+            authToken = null;
+
+            console.log('Barcha foydalanuvchi ma\'lumotlari tozalandi');
+        } catch (error) {
+            console.error('Ma\'lumotlarni tozalashda xatolik:', error);
+        }
+    }
+
+    // Loading ekranini ko'rsatish
+    function showLoading() {
+        document.getElementById('loadingScreen').style.display = 'flex';
+        document.getElementById('landingContainer').style.display = 'none';
+        document.getElementById('errorContainer').style.display = 'none';
+    }
+
+    // Loading ekranini yashirish
+    function hideLoading() {
+        document.getElementById('loadingScreen').style.display = 'none';
+    }
+
+    // Landing page'ni ko'rsatish
+    function showLandingPage() {
+        hideLoading();
+        document.getElementById('landingContainer').style.display = 'block';
+        document.getElementById('errorContainer').style.display = 'none';
+        console.log('Landing page ko\'rsatildi');
+    }
+
+    // Xatolik ekranini ko'rsatish
+    function showError(message) {
+        hideLoading();
+        document.getElementById('landingContainer').style.display = 'none';
+        document.getElementById('errorContainer').style.display = 'flex';
+        document.getElementById('errorMessage').textContent = message;
+        console.log('Xatolik ko\'rsatildi:', message);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('a[href^="#"]');
+        links.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    });
+
+</script>
+</body>
+</html>

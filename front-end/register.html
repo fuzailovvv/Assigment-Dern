@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ro'yxatdan o'tish - Dern-Support</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8f9fa;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .register-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      width: 100%;
+      max-width: 950px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 700px;
+      border: 1px solid #e9ecef;
+    }
+
+    .register-left {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+    }
+
+    .register-right {
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow-y: auto;
+      background: white;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      color: white;
+    }
+
+    .welcome-text h2 {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .welcome-text p {
+      font-size: 1rem;
+      opacity: 0.9;
+      line-height: 1.6;
+      color: #ecf0f1;
+    }
+
+    .register-form h3 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .register-form .subtitle {
+      color: #6c757d;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #495057;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background: #fff;
+      color: #495057;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: #adb5bd;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #6c757d;
+      padding: 0.25rem;
+    }
+
+    .password-toggle:hover {
+      color: #495057;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .register-button {
+      width: 100%;
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      margin-bottom: 1.5rem;
+    }
+
+    .register-button:hover {
+      background: #2980b9;
+    }
+
+    .register-button:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .login-link {
+      text-align: center;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    .login-link a {
+      color: #3498db;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    .features-list {
+      list-style: none;
+      margin-top: 2rem;
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      color: #ecf0f1;
+    }
+
+    .features-list svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .register-container {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+      }
+
+      .register-left {
+        padding: 2rem;
+        min-height: 200px;
+      }
+
+      .register-right {
+        padding: 2rem;
+      }
+
+      .welcome-text h2 {
+        font-size: 1.8rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Loading state */
+    .register-button.loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .register-button.loading::after {
+      content: '';
+      width: 16px;
+      height: 16px;
+      border: 2px solid transparent;
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 8px;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Error state */
+    .form-group.error input {
+      border-color: #dc3545;
+      background: #fff5f5;
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    .form-group.error .error-message {
+      display: block;
+    }
+
+    /* Success state */
+    .form-group.success input {
+      border-color: #28a745;
+      background: #f8fff8;
+    }
+
+    .success-message {
+      color: #28a745;
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    .form-group.success .success-message {
+      display: block;
+    }
+
+    /* Alert styles */
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: none;
+      font-size: 0.9rem;
+      border: 1px solid;
+    }
+
+    .alert.success {
+      background-color: #d1ecf1;
+      border-color: #bee5eb;
+      color: #0c5460;
+    }
+
+    .alert.error {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+      color: #721c24;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    /* Professional styling */
+    .system-info {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 0.8rem;
+      color: #bdc3c7;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="register-container">
+  <!-- Left Side - Welcome -->
+  <div class="register-left">
+    <div class="logo">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+      Dern-Support
+    </div>
+    <div class="welcome-text">
+      <h2>Ro'yxatdan o'tish</h2>
+      <p>Professional texnik yordam boshqaruv tizimiga qo'shiling. Yangi hisob yaratish uchun quyidagi ma'lumotlarni to'ldiring.</p>
+    </div>
+    <ul class="features-list">
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Xavfsiz hisob yaratish
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Professional boshqaruv
+      </li>
+      <li>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        24/7 texnik yordam
+      </li>
+    </ul>
+    <div class="system-info">
+      Dern-Support Management System v2.0
+    </div>
+  </div>
+
+  <!-- Right Side - Register Form -->
+  <div class="register-right">
+    <div class="register-form">
+      <h3>Yangi hisob yaratish</h3>
+      <p class="subtitle">Tizimga kirish uchun yangi hisob ma'lumotlarini kiriting</p>
+
+      <div id="alert" class="alert"></div>
+
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="fullname">To'liq ism</label>
+          <input type="text" id="fullname" name="fullname" placeholder="Ism va familiya" required>
+          <div class="error-message">To'liq ism talab qilinadi</div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="username">Foydalanuvchi nomi</label>
+            <input type="text" id="username" name="username" placeholder="username" required>
+            <div class="error-message">3-20 belgi bo'lishi kerak</div>
+            <div class="success-message">Foydalanuvchi nomi mavjud</div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email manzil</label>
+            <input type="email" id="email" name="email" placeholder="example@email.com" required>
+            <div class="error-message">To'g'ri email kiriting</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Parol</label>
+            <div class="password-container">
+              <input type="password" id="password" name="password" placeholder="Parol" required>
+              <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </button>
+            </div>
+            <div class="error-message">Kamida 6 ta belgi</div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Parolni tasdiqlang</label>
+            <div class="password-container">
+              <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Parolni qayta kiriting" required>
+              <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </button>
+            </div>
+            <div class="error-message">Parollar mos kelmaydi</div>
+          </div>
+        </div>
+
+        <button type="submit" class="register-button">
+          Hisob yaratish
+        </button>
+      </form>
+
+      <div class="login-link">
+        Hisobingiz bormi? <a href="login.html">Tizimga kirish</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_BASE_URL = 'http://localhost:5000/api';
+
+  // Check if user is already logged in
+  window.addEventListener('load', function() {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (token) {
+      window.location.href = 'index.html';
+    }
+  });
+
+  // Password toggle functionality
+  function togglePassword(inputId) {
+    const passwordInput = document.getElementById(inputId);
+    const eyeIcon = passwordInput.nextElementSibling.querySelector('svg');
+
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      eyeIcon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2"/>
+                    <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2"/>
+                `;
+    } else {
+      passwordInput.type = 'password';
+      eyeIcon.innerHTML = `
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                `;
+    }
+  }
+
+  // Show alert message
+  function showAlert(message, type) {
+    const alert = document.getElementById('alert');
+    alert.textContent = message;
+    alert.className = `alert ${type} show`;
+
+    setTimeout(() => {
+      alert.classList.remove('show');
+    }, 5000);
+  }
+
+  // Form validation and submission
+  document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const fullname = document.getElementById('fullname');
+    const username = document.getElementById('username');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const registerButton = document.querySelector('.register-button');
+
+    // Reset previous states
+    document.querySelectorAll('.form-group').forEach(group => {
+      group.classList.remove('error', 'success');
+    });
+
+    let isValid = true;
+
+    // Full name validation
+    if (fullname.value.trim().length < 2) {
+      fullname.closest('.form-group').classList.add('error');
+      isValid = false;
+    }
+
+    // Username validation
+    if (username.value.length < 3 || username.value.length > 20) {
+      username.closest('.form-group').classList.add('error');
+      isValid = false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.value)) {
+      email.closest('.form-group').classList.add('error');
+      isValid = false;
+    }
+
+    // Password validation
+    if (password.value.length < 6) {
+      password.closest('.form-group').classList.add('error');
+      isValid = false;
+    }
+
+    // Confirm password validation
+    if (password.value !== confirmPassword.value) {
+      confirmPassword.closest('.form-group').classList.add('error');
+      isValid = false;
+    }
+
+    if (isValid) {
+      registerButton.classList.add('loading');
+      registerButton.textContent = 'Hisob yaratish';
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+          },
+          body: JSON.stringify({
+            fullname: fullname.value.trim(),
+            username: username.value.trim(),
+            email: email.value.trim(),
+            password: password.value
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showAlert('Hisob muvaffaqiyatli yaratildi', 'success');
+
+          // Save all user data to localStorage
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('userRole', data.user.role); // Save role separately for quick access
+          localStorage.setItem('loginTime', Date.now().toString());
+
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1000);
+
+        } else {
+          showAlert(data.msg || 'Hisob yaratishda xatolik', 'error');
+        }
+
+      } catch (error) {
+        console.error('Register error:', error);
+        showAlert('Server bilan bog\'lanishda xatolik', 'error');
+      } finally {
+        registerButton.classList.remove('loading');
+        registerButton.textContent = 'Hisob yaratish';
+      }
+    }
+  });
+
+  // Real-time validation
+  document.getElementById('username').addEventListener('blur', function() {
+    if (this.value.length >= 3 && this.value.length <= 20) {
+      this.closest('.form-group').classList.remove('error');
+      this.closest('.form-group').classList.add('success');
+    } else if (this.value !== '') {
+      this.closest('.form-group').classList.remove('success');
+      this.closest('.form-group').classList.add('error');
+    }
+  });
+
+  document.getElementById('email').addEventListener('blur', function() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.value) && this.value !== '') {
+      this.closest('.form-group').classList.add('error');
+    } else {
+      this.closest('.form-group').classList.remove('error');
+    }
+  });
+
+  document.getElementById('password').addEventListener('blur', function() {
+    if (this.value.length < 6 && this.value !== '') {
+      this.closest('.form-group').classList.add('error');
+    } else {
+      this.closest('.form-group').classList.remove('error');
+    }
+  });
+
+  document.getElementById('confirmPassword').addEventListener('blur', function() {
+    const password = document.getElementById('password').value;
+    if (this.value !== password && this.value !== '') {
+      this.closest('.form-group').classList.add('error');
+    } else {
+      this.closest('.form-group').classList.remove('error');
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,2999 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foydalanuvchi Dashboard - Dern-Support</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #2d3748;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .user-avatar:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            min-width: 180px;
+            display: none;
+            z-index: 1001;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .user-dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .user-dropdown-item:hover {
+            background: #f7fafc;
+        }
+
+        .user-dropdown-item:last-child {
+            border-top: 1px solid #e2e8f0;
+            color: #e53e3e;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0;
+        }
+
+        .nav-tabs .container {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #718096;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: #4a5568;
+            background-color: #f7fafc;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background-color: #f7fafc;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Dashboard Stats - Clean Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Cards - Exact Match to Reference */
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-header {
+            background: #f7fafc;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .section-body {
+            padding: 1.5rem;
+        }
+
+        /* Offer Items - Matching the Reference Design */
+        .offer-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .offer-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .offer-header {
+            padding: 1.5rem;
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .offer-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.75rem;
+        }
+
+        .offer-usta-info {
+            font-size: 1rem;
+            color: #4a5568;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .offer-usta-info strong {
+            color: #2d3748;
+        }
+
+        .offer-meta {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meta-item i {
+            width: 16px;
+            text-align: center;
+            color: #a0aec0;
+        }
+
+        /* Status Badges - Matching Reference */
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 2px solid;
+        }
+
+        .status-jarayonda {
+            background: #e6f3ff;
+            color: #0066cc;
+            border-color: #0066cc;
+        }
+
+        .status-kutilmoqda {
+            background: #fef5e7;
+            color: #d69e2e;
+            border-color: #d69e2e;
+        }
+
+        .status-tasdiqlangan {
+            background: #f0fff4;
+            color: #38a169;
+            border-color: #38a169;
+        }
+
+        .status-tugallangan {
+            background: #f0fff4;
+            color: #38a169;
+            border-color: #38a169;
+        }
+
+        .status-bekor {
+            background: #fed7d7;
+            color: #e53e3e;
+            border-color: #e53e3e;
+        }
+
+        /* Price Section - Prominent Display Like Reference */
+        .price-section {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+            border-left: 6px solid #38a169;
+            margin: 0;
+        }
+
+        .price-label {
+            font-size: 0.9rem;
+            color: #2d5016;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .price-amount {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #22543d;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Usta Comment Section */
+        .usta-comment {
+            padding: 1.5rem;
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            margin: 0;
+        }
+
+        .comment-label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .comment-text {
+            font-size: 1rem;
+            color: #2d3748;
+            font-style: italic;
+        }
+
+        /* Request Items - Clean Design */
+        .item-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .item-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .item-header {
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        /* Description Section */
+        .item-description {
+            padding: 1rem 1.5rem;
+            border-left: 4px solid #667eea;
+            background: #f7fafc;
+            margin: 0 1.5rem;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.9rem;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* Alert Sections */
+        .alert {
+            margin: 1rem 1.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .alert-warning {
+            background: #fef5e7;
+            color: #d69e2e;
+            border: 1px solid #f6e05e;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            color: #38a169;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-info {
+            background: #ebf8ff;
+            color: #3182ce;
+            border: 1px solid #90cdf4;
+        }
+
+        /* Action Buttons */
+        .item-actions {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #f0f0f0;
+            background: #fafafa;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            font-family: inherit;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            border: 1px solid #667eea;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #4a5568;
+        }
+
+        .btn-success {
+            background: #38a169;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #2f855a;
+        }
+
+        .btn-warning {
+            background: #d69e2e;
+            color: white;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: #b7791f;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #c53030;
+        }
+
+        .btn-info {
+            background: #3182ce;
+            color: white;
+        }
+
+        .btn-info:hover:not(:disabled) {
+            background: #2c5282;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        /* Chat Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .chat-modal-content {
+            background-color: white;
+            margin: 2% auto;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .chat-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            max-width: 80%;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message.other {
+            align-self: flex-start;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.other .message-avatar {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            color: white;
+        }
+
+        .message-content {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .message.other .message-content {
+            background: white;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .chat-input-container {
+            padding: 1rem 1.5rem;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            min-height: 44px;
+            max-height: 120px;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 22px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .chat-input:disabled {
+            background: #f7fafc;
+            color: #a0aec0;
+            cursor: not-allowed;
+        }
+
+        .send-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-button:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .chat-empty {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .chat-empty i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #d1d5db;
+        }
+
+        .chat-disabled-notice {
+            background: #fef5e7;
+            color: #d69e2e;
+            padding: 0.75rem 1rem;
+            margin: 1rem 1.5rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid #f6e05e;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s ease;
+            font-family: inherit;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Profile Section */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .profile-info h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info p {
+            opacity: 0.9;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        /* Rating */
+        .rating {
+            display: flex;
+            gap: 0.25rem;
+            margin: 0.5rem 0;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star:hover,
+        .star.active {
+            color: #f6e05e;
+        }
+
+        /* Completed Requests Selector */
+        .completed-requests-list {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.5rem;
+            background: white;
+        }
+
+        .completed-request-item {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .completed-request-item:hover {
+            background: #f7fafc;
+            border-color: #667eea;
+        }
+
+        .completed-request-item.selected {
+            background: #ebf8ff;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Loading & Empty States */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #718096;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #e2e8f0;
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Activity Items */
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #f7fafc;
+            transition: background-color 0.2s ease;
+        }
+
+        .activity-item:hover {
+            background: #f7fafc;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            color: #2d3748;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action-btn {
+            padding: 1.5rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            text-decoration: none;
+            color: #2d3748;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .quick-action-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .quick-action-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-action-desc {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        /* Modals */
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 20px 25px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f7fafc;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            background: #f7fafc;
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            font-size: 0.9rem;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #38a169;
+        }
+
+        .notification.error {
+            background: #e53e3e;
+        }
+
+        .notification.info {
+            background: #3182ce;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .nav-tabs .container {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 100px;
+                justify-content: center;
+                padding: 0.75rem 1rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .offer-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .offer-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+
+            .chat-modal-content {
+                width: 95%;
+                height: 90vh;
+                margin: 5% auto;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .item-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section-body {
+                padding: 1rem;
+            }
+
+            .rating {
+                justify-content: center;
+            }
+
+            .main {
+                padding: 1rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+    <div class="container">
+        <div class="header-content">
+            <h1>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+                Dern-Support
+            </h1>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar" onclick="toggleUserDropdown()">U</div>
+                <span id="userName">Foydalanuvchi</span>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-dropdown-item" onclick="showTab('profile')">
+                        <i class="fas fa-user"></i> Profil
+                    </div>
+                    <div class="user-dropdown-item" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Chiqish
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Navigation -->
+<nav class="nav-tabs">
+    <div class="container">
+        <button class="tab-btn active" onclick="showTab('dashboard')">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </button>
+        <button class="tab-btn" onclick="showTab('requests')">
+            <i class="fas fa-plus-circle"></i> Yangi So'rov
+        </button>
+        <button class="tab-btn" onclick="showTab('my-requests')">
+            <i class="fas fa-list"></i> Mening So'rovlarim
+        </button>
+        <button class="tab-btn" onclick="showTab('offers')">
+            <i class="fas fa-envelope"></i> Takliflar
+        </button>
+        <button class="tab-btn" onclick="showTab('feedback')">
+            <i class="fas fa-star"></i> Baholash
+        </button>
+        <button class="tab-btn" onclick="showTab('profile')">
+            <i class="fas fa-user"></i> Profil
+        </button>
+    </div>
+</nav>
+
+<main class="main">
+    <div class="container">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="totalRequests">0</div>
+                    <div class="stat-label">Jami So'rovlar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="pendingRequests">0</div>
+                    <div class="stat-label">Kutilayotgan</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="waitingRequests">0</div>
+                    <div class="stat-label">Tasdiqlash Kerak</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="activeRequests">0</div>
+                    <div class="stat-label">Faol Ishlar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="completedRequests">0</div>
+                    <div class="stat-label">Tugallangan</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="#" class="quick-action-btn" onclick="showTab('requests')">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="quick-action-title">Yangi So'rov</div>
+                    <div class="quick-action-desc">Yangi xizmat so'rovi yaratish</div>
+                </a>
+                <a href="#" class="quick-action-btn" onclick="showTab('offers')">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="quick-action-title">Takliflar</div>
+                    <div class="quick-action-desc">Kelgan takliflarni ko'rish</div>
+                </a>
+                <a href="#" class="quick-action-btn" onclick="showTab('feedback')">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="quick-action-title">Baholash</div>
+                    <div class="quick-action-desc">Ustalarni baholash</div>
+                </a>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-line"></i> So'nggi Faollik
+                    </h2>
+                    <button class="btn btn-secondary btn-sm" onclick="loadDashboard()">
+                        <i class="fas fa-sync-alt"></i> Yangilash
+                    </button>
+                </div>
+                <div class="section-body">
+                    <div id="recentActivity">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Request Tab -->
+        <div id="requests" class="tab-content">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-plus-circle"></i> Yangi So'rov Yaratish
+                    </h2>
+                </div>
+                <div class="section-body">
+                    <form id="createRequestForm">
+                        <div class="form-group">
+                            <label for="requestType">So'rov Turi *</label>
+                            <select id="requestType" required>
+                                <option value="">Tanlang...</option>
+                                <option value="Hardware">Hardware - Kompyuter va jihozlar ta'mirlash</option>
+                                <option value="Software">Software - Dasturiy ta'minot o'rnatish va sozlash</option>
+                                <option value="Network">Network - Tarmoq va internet muammolari</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="requestName">So'rov Nomi *</label>
+                            <input type="text" id="requestName" placeholder="Masalan: Kompyuter ishlamayapti" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Batafsil Tavsif</label>
+                            <textarea id="description" placeholder="Muammo haqida batafsil yozing. Qanday xatolik yuz berdi? Qachondan boshlab muammo bor?" rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="location">Joylashuv</label>
+                            <input type="text" id="location" placeholder="Masalan: Toshkent, Chilonzor tumani">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> So'rov Yuborish
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Requests Tab - Chat tugmasi olib tashlandi -->
+        <div id="my-requests" class="tab-content">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-list"></i> Mening So'rovlarim
+                    </h2>
+                    <button class="btn btn-secondary btn-sm" onclick="loadMyRequests()">
+                        <i class="fas fa-sync-alt"></i> Yangilash
+                    </button>
+                </div>
+                <div class="section-body">
+                    <div id="myRequestsContainer">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Offers Tab - Chat funksiyasi bilan -->
+        <div id="offers" class="tab-content">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-envelope"></i> Takliflar
+                    </h2>
+                    <button class="btn btn-secondary btn-sm" onclick="loadOffers()">
+                        <i class="fas fa-sync-alt"></i> Yangilash
+                    </button>
+                </div>
+                <div class="section-body">
+                    <div id="offersContainer">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Tab -->
+        <div id="feedback" class="tab-content">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-star"></i> Baholash
+                    </h2>
+                </div>
+                <div class="section-body">
+                    <div class="form-group">
+                        <label>Tugallangan So'rovlaringiz</label>
+                        <div id="completedRequestsList" class="completed-requests-list">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i> Tugallangan so'rovlar yuklanmoqda...
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="feedbackForm" style="display: none;">
+                        <input type="hidden" id="selectedRequestId">
+                        <input type="hidden" id="selectedUstaId">
+
+                        <div class="form-group">
+                            <label>Baho *</label>
+                            <div class="rating">
+                                <span class="star" data-rating="1">★</span>
+                                <span class="star" data-rating="2">★</span>
+                                <span class="star" data-rating="3">★</span>
+                                <span class="star" data-rating="4">★</span>
+                                <span class="star" data-rating="5">★</span>
+                            </div>
+                            <input type="hidden" id="rating" required>
+                            <small style="color: #718096; font-size: 0.8rem;">1 - Juda yomon, 5 - A'lo</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment">Izoh</label>
+                            <textarea id="comment" placeholder="Usta haqida fikr va takliflaringizni yozing" rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Baholash Yuborish
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profile" class="tab-content">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profileAvatar">U</div>
+                <div class="profile-info">
+                    <h2 id="profileName">Foydalanuvchi</h2>
+                    <p><i class="fas fa-envelope"></i> <span id="profileEmail">email@example.com</span></p>
+                    <p><i class="fas fa-user"></i> <span id="profileUsername">username</span></p>
+                    <p><i class="fas fa-calendar"></i> A'zo bo'lgan: <span id="profileJoinDate">2024</span></p>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-edit"></i> Profil Ma'lumotlarini O'zgartirish
+                    </h2>
+                </div>
+                <div class="section-body">
+                    <form id="updateProfileForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="updateFullname">To'liq Ism *</label>
+                                <input type="text" id="updateFullname" placeholder="Ism Familiya" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="updateUsername">Foydalanuvchi nomi *</label>
+                                <input type="text" id="updateUsername" placeholder="username" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateEmail">Email *</label>
+                            <input type="email" id="updateEmail" placeholder="email@example.com" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Saqlash
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-key"></i> Parolni O'zgartirish
+                    </h2>
+                </div>
+                <div class="section-body">
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">Joriy Parol *</label>
+                            <input type="password" id="currentPassword" placeholder="Joriy parolingizni kiriting" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">Yangi Parol *</label>
+                            <input type="password" id="newPassword" placeholder="Yangi parolni kiriting" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Yangi Parolni Tasdiqlang *</label>
+                            <input type="password" id="confirmPassword" placeholder="Yangi parolni qayta kiriting" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-key"></i> Parolni O'zgartirish
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Chat Modal -->
+<div id="chatModal" class="modal">
+    <div class="chat-modal-content">
+        <div class="chat-header">
+            <h3 id="chatTitle">Chat - Usta bilan</h3>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="btn btn-secondary btn-sm" onclick="refreshChatMessages()" id="refreshChatBtn" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 0.5rem;">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <span class="close" onclick="closeChatModal()">&times;</span>
+            </div>
+        </div>
+        <div class="chat-body">
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-empty">
+                    <i class="fas fa-comments"></i>
+                    <h3>Chat boshlang</h3>
+                    <p>Bu yerda usta bilan muloqot qilishingiz mumkin</p>
+                </div>
+            </div>
+            <div id="chatDisabledNotice" class="chat-disabled-notice" style="display: none;">
+                <i class="fas fa-info-circle"></i>
+                Ish tugallanganligi sababli chat yozish imkoniyati o'chirilgan. Faqat o'qish mumkin.
+            </div>
+            <div class="chat-input-container" id="chatInputContainer">
+                <textarea
+                        class="chat-input"
+                        id="chatInput"
+                        placeholder="Xabaringizni yozing..."
+                        rows="1"
+                        onkeydown="handleChatKeyDown(event)"
+                        oninput="autoResizeChat(this)"
+                ></textarea>
+                <button class="send-button" id="sendChatButton" onclick="sendChatMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Tasdiqlash</h3>
+            <span class="close" onclick="closeModal('confirmModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p id="confirmMessage">Ushbu amalni bajarishni xohlaysizmi?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('confirmModal')">Bekor qilish</button>
+            <button class="btn btn-primary" id="confirmAction">Tasdiqlash</button>
+        </div>
+    </div>
+</div>
+
+<div id="alertModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="alertTitle">Xabar</h3>
+            <span class="close" onclick="closeModal('alertModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p id="alertMessage"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="closeModal('alertModal')">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification -->
+<div id="notification" class="notification"></div>
+
+<script>
+    // API Base URLs
+    const API_BASE = 'http://localhost:5000/api/user';
+    const CHAT_API_BASE = 'http://localhost:5000/api/chat';
+
+    // Auth token
+    let authToken = localStorage.getItem('token') || '';
+
+    // Current user data
+    let currentUser = null;
+    let selectedRequestForFeedback = null;
+
+    // Chat variables
+    let currentChatRequestId = null;
+    let currentRequestStatus = null; // Add this line
+    let chatMessages = [];
+    let chatCanWrite = false;
+
+    // Dashboard stats
+    let dashboardStats = {
+        totalRequests: 0,
+        pendingRequests: 0,
+        waitingRequests: 0,
+        activeRequests: 0,
+        completedRequests: 0
+    };
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeApp();
+        setupEventListeners();
+        loadDashboard();
+    });
+
+    function initializeApp() {
+        // Check if user is authenticated
+        if (!authToken) {
+            showNotification('Iltimos, tizimga kiring!', 'error');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+            return;
+        }
+
+        // Load user info
+        loadUserInfo();
+    }
+
+    function setupEventListeners() {
+        // Form submissions
+        document.getElementById('createRequestForm').addEventListener('submit', handleCreateRequest);
+        document.getElementById('feedbackForm').addEventListener('submit', handleSubmitFeedback);
+        document.getElementById('updateProfileForm').addEventListener('submit', handleUpdateProfile);
+        document.getElementById('changePasswordForm').addEventListener('submit', handleChangePassword);
+
+        // Rating stars
+        setupRatingStars();
+
+        // Modal close events
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                if (event.target.id === 'chatModal') {
+                    closeChatModal();
+                }
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.user-info')) {
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+        });
+    }
+
+    function setupRatingStars() {
+        const stars = document.querySelectorAll('.star');
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.dataset.rating);
+                document.getElementById('rating').value = rating;
+
+                stars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+
+            star.addEventListener('mouseover', function() {
+                const rating = parseInt(this.dataset.rating);
+                stars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.style.color = '#f6e05e';
+                    } else {
+                        s.style.color = '#e2e8f0';
+                    }
+                });
+            });
+        });
+
+        document.querySelector('.rating').addEventListener('mouseleave', function() {
+            const currentRating = parseInt(document.getElementById('rating').value) || 0;
+            stars.forEach((s, index) => {
+                if (index < currentRating) {
+                    s.style.color = '#f6e05e';
+                } else {
+                    s.style.color = '#e2e8f0';
+                }
+            });
+        });
+    }
+
+    // Tab functionality
+    function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName).classList.add('active');
+
+        // Add active class to clicked button
+        document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+
+        // Close user dropdown
+        document.getElementById('userDropdown').classList.remove('show');
+
+        // Load data for specific tabs
+        if (tabName === 'dashboard') {
+            loadDashboard();
+        } else if (tabName === 'my-requests') {
+            loadMyRequests();
+        } else if (tabName === 'offers') {
+            loadOffers();
+        } else if (tabName === 'feedback') {
+            loadCompletedRequests();
+        } else if (tabName === 'profile') {
+            loadProfile();
+        }
+    }
+
+    function toggleUserDropdown() {
+        document.getElementById('userDropdown').classList.toggle('show');
+    }
+
+    // API Functions
+    async function apiRequest(endpoint, options = {}) {
+        const url = `${API_BASE}${endpoint}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+                ...options.headers
+            },
+            ...options
+        };
+
+        try {
+            const response = await fetch(url, config);
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // Token expired
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    showNotification('Sessiya muddati tugagan. Qayta kiring.', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.msg || `HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('API Error:', error);
+            showNotification(error.message || 'Serverda xatolik yuz berdi', 'error');
+            throw error;
+        }
+    }
+
+    // Chat API Functions
+    async function chatApiRequest(endpoint, options = {}) {
+        const url = `${CHAT_API_BASE}${endpoint}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+                ...options.headers
+            },
+            ...options
+        };
+
+        try {
+            const response = await fetch(url, config);
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    showNotification('Sessiya muddati tugagan. Qayta kiring.', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.msg || `Chat xatoligi: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Chat API Error:', error);
+            throw error;
+        }
+    }
+
+    // Load user info
+    async function loadUserInfo() {
+        try {
+            const userInfo = await apiRequest('/me');
+            if (userInfo) {
+                document.getElementById('userName').textContent = userInfo.fullname || 'Foydalanuvchi';
+                document.getElementById('userAvatar').textContent = (userInfo.fullname || 'U').charAt(0).toUpperCase();
+                currentUser = userInfo;
+
+                // Save to localStorage for offline access
+                localStorage.setItem('user', JSON.stringify(userInfo));
+            }
+        } catch (error) {
+            console.error('Error loading user info:', error);
+            // Try to load from localStorage as fallback
+            const cachedUser = localStorage.getItem('user');
+            if (cachedUser) {
+                const userInfo = JSON.parse(cachedUser);
+                document.getElementById('userName').textContent = userInfo.fullname || 'Foydalanuvchi';
+                document.getElementById('userAvatar').textContent = (userInfo.fullname || 'U').charAt(0).toUpperCase();
+                currentUser = userInfo;
+            }
+        }
+    }
+
+    // Load Profile
+    async function loadProfile() {
+        try {
+            const userInfo = await apiRequest('/me');
+            if (userInfo) {
+                // Update profile display
+                document.getElementById('profileName').textContent = userInfo.fullname || 'Foydalanuvchi';
+                document.getElementById('profileEmail').textContent = userInfo.email || 'email@example.com';
+                document.getElementById('profileUsername').textContent = userInfo.username || 'username';
+                document.getElementById('profileAvatar').textContent = (userInfo.fullname || 'U').charAt(0).toUpperCase();
+
+                if (userInfo.createdAt) {
+                    const joinDate = new Date(userInfo.createdAt).toLocaleDateString('uz-UZ');
+                    document.getElementById('profileJoinDate').textContent = joinDate;
+                }
+
+                // Fill update form
+                document.getElementById('updateFullname').value = userInfo.fullname || '';
+                document.getElementById('updateUsername').value = userInfo.username || '';
+                document.getElementById('updateEmail').value = userInfo.email || '';
+
+                currentUser = userInfo;
+            }
+        } catch (error) {
+            console.error('Error loading profile:', error);
+        }
+    }
+
+    // Load Dashboard
+    async function loadDashboard() {
+        try {
+            // Load requests and offers in parallel
+            const [requests, offersResponse] = await Promise.all([
+                apiRequest('/requests/my'),
+                apiRequest('/mails')
+            ]);
+
+            // Extract offers data from response
+            const offers = offersResponse.data || [];
+
+            // Calculate stats
+            dashboardStats.totalRequests = requests.length;
+            dashboardStats.pendingRequests = requests.filter(r => r.status === 'pending').length;
+            dashboardStats.waitingRequests = requests.filter(r => r.status === 'waiting').length;
+            dashboardStats.activeRequests = requests.filter(r =>
+                r.status === 'confirmed' || r.status === 'in_progress'
+            ).length;
+            dashboardStats.completedRequests = requests.filter(r =>
+                r.status === 'completed'
+            ).length;
+
+            // Update stats display
+            document.getElementById('totalRequests').textContent = dashboardStats.totalRequests;
+            document.getElementById('pendingRequests').textContent = dashboardStats.pendingRequests;
+            document.getElementById('waitingRequests').textContent = dashboardStats.waitingRequests;
+            document.getElementById('activeRequests').textContent = dashboardStats.activeRequests;
+            document.getElementById('completedRequests').textContent = dashboardStats.completedRequests;
+
+            // Load recent activity
+            loadRecentActivity(requests, offers);
+
+        } catch (error) {
+            console.error('Error loading dashboard:', error);
+            document.getElementById('recentActivity').innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Ma'lumotlarni yuklashda xatolik</h3>
+                    <p>Iltimos, qayta urinib ko'ring</p>
+                </div>
+            `;
+        }
+    }
+
+    function loadRecentActivity(requests, offers) {
+        const container = document.getElementById('recentActivity');
+        const activities = [];
+
+        // Add recent requests
+        requests.slice(0, 3).forEach(request => {
+            activities.push({
+                type: 'request',
+                title: `So'rov yaratildi: ${request.requestName}`,
+                time: request.createdAt,
+                icon: 'fas fa-plus-circle',
+                color: '#667eea'
+            });
+        });
+
+        // Add recent offers
+        offers.slice(0, 2).forEach(offer => {
+            activities.push({
+                type: 'offer',
+                title: `Yangi taklif keldi: ${offer.request?.requestName || 'So\'rov'}`,
+                time: offer.createdAt,
+                icon: 'fas fa-envelope',
+                color: '#38a169'
+            });
+        });
+
+        // Sort by time
+        activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+        if (activities.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-history"></i>
+                    <h3>Faollik topilmadi</h3>
+                    <p>Hali hech qanday faollik yo'q</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = activities.map(activity => `
+            <div class="activity-item">
+                <div class="activity-icon" style="background: ${activity.color}20; color: ${activity.color};">
+                    <i class="${activity.icon}"></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-title">${activity.title}</div>
+                    <div class="activity-time">${formatDate(activity.time)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Create Request
+    async function handleCreateRequest(event) {
+        event.preventDefault();
+
+        const formData = {
+            requestType: document.getElementById('requestType').value,
+            requestName: document.getElementById('requestName').value,
+            description: document.getElementById('description').value,
+            location: document.getElementById('location').value
+        };
+
+        try {
+            showLoading('createRequestForm');
+            await apiRequest('/requests', {
+                method: 'POST',
+                body: JSON.stringify(formData)
+            });
+
+            showNotification('So\'rov muvaffaqiyatli yaratildi!', 'success');
+            document.getElementById('createRequestForm').reset();
+
+            // Update dashboard stats
+            dashboardStats.totalRequests++;
+            dashboardStats.pendingRequests++;
+            document.getElementById('totalRequests').textContent = dashboardStats.totalRequests;
+            document.getElementById('pendingRequests').textContent = dashboardStats.pendingRequests;
+
+            // Switch to my requests tab
+            setTimeout(() => {
+                showTab('my-requests');
+            }, 1500);
+
+        } catch (error) {
+            console.error('Error creating request:', error);
+        } finally {
+            hideLoading('createRequestForm');
+        }
+    }
+
+    // Load My Requests - Chat tugmasi olib tashlandi
+    async function loadMyRequests() {
+        const container = document.getElementById('myRequestsContainer');
+        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</div>';
+
+        try {
+            const requests = await apiRequest('/requests/my');
+
+            if (!requests || requests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>So'rovlar topilmadi</h3>
+                        <p>Hali hech qanday so'rov yaratilmagan</p>
+                        <button class="btn btn-primary" onclick="showTab('requests')">
+                            <i class="fas fa-plus"></i> Birinchi so'rov yaratish
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = requests.map(request => `
+                <div class="item-card">
+                    <div class="item-header">
+                        <div>
+                            <div class="item-title">${request.requestName}</div>
+                            <div class="item-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-tag"></i>
+                                    <span>${request.requestType}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>${formatDate(request.createdAt)}</span>
+                                </div>
+                                ${request.location ? `
+                                    <div class="meta-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>${request.location}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <span class="status-badge status-${getStatusClass(request.status)}">
+                            ${getStatusText(request.status)}
+                        </span>
+                    </div>
+                    ${request.description ? `
+                        <div class="item-description">
+                            ${request.description}
+                        </div>
+                    ` : ''}
+                    ${getStatusAlert(request.status)}
+                    ${getRequestActions(request)}
+                </div>
+            `).join('');
+
+        } catch (error) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Xatolik yuz berdi</h3>
+                    <p>So'rovlarni yuklashda xatolik yuz berdi</p>
+                    <button class="btn btn-primary" onclick="loadMyRequests()">
+                        <i class="fas fa-sync-alt"></i> Qayta urinish
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    // Load Offers with Chat functionality based on mail data
+    async function loadOffers() {
+        const container = document.getElementById('offersContainer');
+        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</div>';
+
+        try {
+            const response = await apiRequest('/mails');
+            const offers = response.data || [];
+
+            if (!offers || offers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-envelope-open"></i>
+                        <h3>Takliflar topilmadi</h3>
+                        <p>Hali hech qanday taklif kelmagan</p>
+                        <small>So'rov yaratganingizdan so'ng ustalar sizga takliflar yuborishadi</small>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = offers.map(offer => `
+                <div class="offer-card">
+                    <div class="offer-header">
+                        <div>
+                            <div class="offer-title">${offer.request?.requestName || 'Xizmat So\'rovi'}</div>
+                            <div class="offer-usta-info">
+                                <strong>Usta:</strong> ${offer.usta?.fullname || 'Professional Usta'}
+                            </div>
+                            <div class="offer-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${offer.request?.location || 'Joylashuv ko\'rsatilmagan'}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>${formatDate(offer.createdAt)}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-tools"></i>
+                                    <span>${offer.request?.requestType || 'Hardware'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="status-badge status-${getOfferStatusClass(offer.request?.status)}">
+                            ${getOfferStatusText(offer.request?.status)}
+                        </span>
+                    </div>
+
+                    <div class="price-section">
+                        <div class="price-label">Usta taklif qilgan narx:</div>
+                        <div class="price-amount">
+                            ${offer.price ? offer.price.toLocaleString() : '22,300'}
+                        </div>
+                    </div>
+
+                    ${offer.message ? `
+                        <div class="usta-comment">
+                            <div class="comment-label">Usta izohi:</div>
+                            <div class="comment-text">${offer.message}</div>
+                        </div>
+                    ` : ''}
+
+                    ${getOfferActions(offer)}
+                </div>
+            `).join('');
+
+        } catch (error) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Xatolik yuz berdi</h3>
+                    <p>Takliflarni yuklashda xatolik yuz berdi</p>
+                    <button class="btn btn-primary" onclick="loadOffers()">
+                        <i class="fas fa-sync-alt"></i> Qayta urinish
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    // Load Completed Requests for Feedback
+    async function loadCompletedRequests() {
+        const container = document.getElementById('completedRequestsList');
+        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Tugallangan so\'rovlar yuklanmoqda...</div>';
+
+        try {
+            const requests = await apiRequest('/requests/my');
+            const completedRequests = requests.filter(r => r.status === 'completed');
+
+            if (!completedRequests || completedRequests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Tugallangan so'rovlar topilmadi</h3>
+                        <p>Hali hech qanday so'rov tugallanmagan</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = completedRequests.map(request => `
+                <div class="completed-request-item" onclick="selectRequestForFeedback('${request._id}', '${request.ustaId || ''}', '${request.requestName}')">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">${request.requestName}</div>
+                    <div style="font-size: 0.8rem; color: #718096;">
+                        <i class="fas fa-tag"></i> ${request.requestType} •
+                        <i class="fas fa-calendar"></i> ${formatDate(request.createdAt)}
+                        ${request.price ? ` • <i class="fas fa-dollar-sign"></i> ${request.price.toLocaleString()}` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (error) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Xatolik yuz berdi</h3>
+                    <p>So'rovlarni yuklashda xatolik yuz berdi</p>
+                </div>
+            `;
+        }
+    }
+
+    // Get status class for styling
+    function getStatusClass(status) {
+        const statusMap = {
+            'pending': 'kutilmoqda',
+            'waiting': 'kutilmoqda',
+            'confirmed': 'tasdiqlangan',
+            'in_progress': 'jarayonda',
+            'completed': 'tugallangan',
+            'cancelled': 'bekor'
+        };
+        return statusMap[status] || 'kutilmoqda';
+    }
+
+    function getOfferStatusClass(status) {
+        const statusMap = {
+            'pending': 'kutilmoqda',
+            'confirmed': 'jarayonda',
+            'in_progress': 'jarayonda',
+            'completed': 'tugallangan',
+            'cancelled': 'bekor'
+        };
+        return statusMap[status] || 'jarayonda';
+    }
+
+    function getOfferStatusText(status) {
+        const statusMap = {
+            'pending': 'KUTILMOQDA',
+            'confirmed': 'JARAYONDA',
+            'in_progress': 'JARAYONDA',
+            'completed': 'TUGALLANGAN',
+            'cancelled': 'BEKOR QILINGAN'
+        };
+        return statusMap[status] || 'JARAYONDA';
+    }
+
+    // Get status alert
+    function getStatusAlert(status) {
+        const alerts = {
+            'pending': {
+                type: 'info',
+                message: 'Sizning so\'rovingiz yaratildi va ustalar ko\'rishini kutmoqda.'
+            },
+            'waiting': {
+                type: 'warning',
+                message: 'Sizning so\'rovingiz yaratildi va ustalar ko\'rishini kutmoqda.'
+            },
+            'confirmed': {
+                type: 'success',
+                message: 'Taklif tasdiqlandi. Usta ish boshlashini kutmoqda.'
+            },
+            'in_progress': {
+                type: 'info',
+                message: 'Ish jarayonda. Usta ishni bajarib turibdi.'
+            },
+            'completed': {
+                type: 'success',
+                message: 'Ish tugallandi! Endi ustani baholashingiz mumkin.'
+            }
+        };
+
+        const alert = alerts[status];
+        if (!alert) return '';
+
+        return `
+            <div class="alert alert-${alert.type}">
+                <i class="fas fa-info-circle"></i>
+                ${alert.message}
+            </div>
+        `;
+    }
+
+    // Get request actions based on status - Chat tugmasi olib tashlandi
+    function getRequestActions(request) {
+        if (request.status === 'cancelled' || request.status === 'completed') {
+            return '';
+        }
+
+        let actions = '<div class="item-actions">';
+
+        if (request.status === 'pending') {
+            actions += `
+                <button class="btn btn-danger btn-sm" onclick="cancelRequest('${request._id}')">
+                    <i class="fas fa-times"></i> So'rovni Bekor Qilish
+                </button>
+            `;
+        } else if (request.status === 'waiting') {
+            actions += `
+                <button class="btn btn-warning btn-sm" onclick="showTab('offers')">
+                    <i class="fas fa-envelope"></i> Takliflarni Ko'rish
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="cancelRequest('${request._id}')">
+                    <i class="fas fa-times"></i> So'rovni Bekor Qilish
+                </button>
+            `;
+        }
+
+        actions += '</div>';
+        return actions;
+    }
+
+    // Get offer actions with chat functionality - Chat faqat takliflar qismida
+    function getOfferActions(offer) {
+        // Check if offer is already processed
+        if (offer.status === 'confirmed' || offer.request?.status === 'confirmed' || offer.request?.status === 'in_progress' || offer.request?.status === 'completed') {
+            let actions = `
+                <div class="item-actions">
+                    <span class="btn btn-secondary btn-sm" style="cursor: not-allowed;">
+                        <i class="fas fa-check"></i> Taklif Qayta Ishlangan
+                    </span>
+        `;
+
+            // Add chat button if confirmed, in progress, or completed
+            if (offer.request?.status === 'confirmed' || offer.request?.status === 'in_progress' || offer.request?.status === 'completed') {
+                actions += `
+                <button class="btn btn-info btn-sm" onclick="openChatModal('${offer.request._id}', '${offer.request.requestName}', '${offer.usta?.fullname || 'Usta'}', '${offer.request?.status}')">
+                    <i class="fas fa-comments"></i> Usta bilan Chat
+                </button>
+            `;
+            }
+
+            actions += '</div>';
+            return actions;
+        }
+
+        return `
+        <div class="item-actions">
+            <button class="btn btn-success btn-sm" onclick="acceptOffer('${offer._id}')">
+                <i class="fas fa-check"></i> Qabul Qilish
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="rejectOffer('${offer._id}')">
+                <i class="fas fa-times"></i> Rad Etish
+            </button>
+        </div>
+    `;
+    }
+
+    // Accept Offer
+    async function acceptOffer(offerId) {
+        showConfirm(
+            'Taklifni qabul qilasizmi?',
+            'Bu amalni bekor qilib bo\'lmaydi. Taklif qabul qilinganidan so\'ng usta bilan bog\'lanishingiz mumkin.',
+            async () => {
+                try {
+                    await apiRequest(`/mails/${offerId}/confirm`, {
+                        method: 'POST'
+                    });
+                    showNotification('Taklif qabul qilindi!', 'success');
+
+                    // Refresh offers and requests
+                    loadOffers();
+                    loadMyRequests();
+                    loadDashboard();
+
+                } catch (error) {
+                    console.error('Error accepting offer:', error);
+                }
+            }
+        );
+    }
+
+    // Reject Offer
+    async function rejectOffer(offerId) {
+        showConfirm(
+            'Taklifni rad etasizmi?',
+            'Bu amalni bekor qilib bo\'lmaydi.',
+            async () => {
+                try {
+                    await apiRequest(`/mails/${offerId}/reject`, {
+                        method: 'DELETE'
+                    });
+                    showNotification('Taklif rad etildi!', 'info');
+
+                    // Refresh offers
+                    loadOffers();
+                    loadDashboard();
+
+                } catch (error) {
+                    console.error('Error rejecting offer:', error);
+                }
+            }
+        );
+    }
+
+    // Cancel Request
+    async function cancelRequest(requestId) {
+        showConfirm(
+            'So\'rovni bekor qilasizmi?',
+            'Bu amalni bekor qilib bo\'lmaydi. So\'rov bekor qilinganidan so\'ng uni qayta tiklash mumkin emas.',
+            async () => {
+                try {
+                    await apiRequest(`/requests/${requestId}/cancel`, {
+                        method: 'POST'
+                    });
+                    showNotification('So\'rov bekor qilindi!', 'info');
+
+                    // Refresh requests and dashboard
+                    loadMyRequests();
+                    loadDashboard();
+
+                } catch (error) {
+                    console.error('Error cancelling request:', error);
+                }
+            }
+        );
+    }
+
+    // Enhanced Chat Functions - Faqat takliflar uchun
+    async function openChatModal(requestId, requestName, ustaName = 'Usta', requestStatus = 'confirmed') {
+        currentChatRequestId = requestId;
+        currentRequestStatus = requestStatus; // Store request status
+        document.getElementById('chatTitle').textContent = `Chat - ${requestName} (${ustaName})`;
+        document.getElementById('chatModal').style.display = 'block';
+
+        // Load messages with error handling
+        await loadChatMessages();
+
+        // Start polling for new messages
+        // Auto-polling ni olib tashladik
+    }
+
+    function closeChatModal() {
+        document.getElementById('chatModal').style.display = 'none';
+        currentChatRequestId = null;
+        currentRequestStatus = null; // Reset status
+        chatMessages = [];
+        chatCanWrite = false;
+
+        // Auto-polling ni olib tashladik
+
+        // Clear chat input
+        document.getElementById('chatInput').value = '';
+        autoResizeChat(document.getElementById('chatInput'));
+    }
+
+    // Manual refresh function
+    async function refreshChatMessages() {
+        if (!currentChatRequestId) return;
+
+        const refreshBtn = document.getElementById('refreshChatBtn');
+        const originalContent = refreshBtn.innerHTML;
+
+        // Show loading state
+        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        refreshBtn.disabled = true;
+
+        try {
+            await loadChatMessages(false); // false = don't show loading in chat area
+            showNotification('Chat yangilandi!', 'success');
+        } catch (error) {
+            showNotification('Chat yangilanmadi!', 'error');
+        } finally {
+            // Restore button state
+            refreshBtn.innerHTML = originalContent;
+            refreshBtn.disabled = false;
+        }
+    }
+
+    async function loadChatMessages(showLoading = true) {
+        if (!currentChatRequestId) return;
+
+        const container = document.getElementById('chatMessages');
+
+        if (showLoading) {
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Xabarlar yuklanmoqda...</div>';
+        }
+
+        try {
+            const response = await chatApiRequest(`/${currentChatRequestId}`);
+
+            if (response) {
+                chatMessages = response.messages || [];
+                chatCanWrite = response.canWrite || false;
+
+                renderChatMessages();
+                updateChatInputState();
+            }
+
+        } catch (error) {
+            console.error('Error loading chat messages:', error);
+            if (showLoading) {
+                container.innerHTML = `
+                    <div class="chat-empty">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Chat yuklanmadi</h3>
+                        <p>${error.message || 'Xabarlarni yuklashda xatolik'}</p>
+                        <button class="btn btn-primary btn-sm" onclick="loadChatMessages(true)">
+                            <i class="fas fa-sync-alt"></i> Qayta urinish
+                        </button>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    function renderChatMessages() {
+        const container = document.getElementById('chatMessages');
+
+        if (!chatMessages || chatMessages.length === 0) {
+            container.innerHTML = `
+                <div class="chat-empty">
+                    <i class="fas fa-comments"></i>
+                    <h3>Chat boshlang</h3>
+                    <p>Bu yerda usta bilan muloqot qilishingiz mumkin</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = chatMessages.map(message => {
+            const isOwn = message.isOwnMessage;
+            const messageClass = isOwn ? 'user' : 'other';
+
+            return `
+                <div class="message ${messageClass}">
+                    <div class="message-avatar">
+                        ${isOwn ? '<i class="fas fa-user"></i>' : '<i class="fas fa-user-tie"></i>'}
+                    </div>
+                    <div class="message-content">
+                        <div>${escapeHtml(message.text)}</div>
+                        <div class="message-time">${formatMessageTime(message.createdAt)}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Scroll to bottom
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function updateChatInputState() {
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendChatButton');
+        const disabledNotice = document.getElementById('chatDisabledNotice');
+        const inputContainer = document.getElementById('chatInputContainer');
+
+        // Chat yozish faqat in_progress holatida mumkin
+        const canWriteBasedOnStatus = currentRequestStatus === 'in_progress';
+        const actualCanWrite = chatCanWrite && canWriteBasedOnStatus;
+
+        if (actualCanWrite) {
+            chatInput.disabled = false;
+            sendButton.disabled = false;
+            chatInput.placeholder = 'Xabaringizni yozing...';
+            disabledNotice.style.display = 'none';
+            inputContainer.style.display = 'flex';
+        } else {
+            chatInput.disabled = true;
+            sendButton.disabled = true;
+
+            // Status ga qarab xabar ko'rsatish
+            if (currentRequestStatus === 'completed') {
+                chatInput.placeholder = 'Ish tugallangani uchun chat yopilgan';
+                disabledNotice.innerHTML = '<i class="fas fa-info-circle"></i> Ish tugallanganligi sababli chat yozish imkoniyati o\'chirilgan. Faqat o\'qish mumkin.';
+            } else if (currentRequestStatus === 'confirmed') {
+                chatInput.placeholder = 'Ish boshlanguncha kutib turing';
+                disabledNotice.innerHTML = '<i class="fas fa-clock"></i> Ish hali boshlanmagan. Usta ish boshlashi bilan chat yozish mumkin bo\'ladi.';
+            } else {
+                chatInput.placeholder = 'Chat yozish imkoniyati cheklangan';
+                disabledNotice.innerHTML = '<i class="fas fa-info-circle"></i> Hozircha chat yozish imkoniyati yo\'q.';
+            }
+
+            disabledNotice.style.display = 'block';
+        }
+    }
+
+    async function sendChatMessage() {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+
+        // Status tekshiruvi qo'shish
+        const canWriteBasedOnStatus = currentRequestStatus === 'in_progress';
+
+        if (!text || !currentChatRequestId || !chatCanWrite || !canWriteBasedOnStatus) {
+            if (!text) {
+                showNotification('Xabar matnini kiriting!', 'error');
+            } else if (!canWriteBasedOnStatus) {
+                if (currentRequestStatus === 'confirmed') {
+                    showNotification('Ish hali boshlanmagan. Usta ish boshlashi bilan chat yozish mumkin bo\'ladi!', 'error');
+                } else if (currentRequestStatus === 'completed') {
+                    showNotification('Ish tugallangani uchun chat yozish mumkin emas!', 'error');
+                } else {
+                    showNotification('Chat yozish imkoniyati cheklangan!', 'error');
+                }
+            } else if (!chatCanWrite) {
+                showNotification('Chat yozish imkoniyati cheklangan!', 'error');
+            }
+            return;
+        }
+
+        try {
+            // Disable input while sending
+            input.disabled = true;
+            document.getElementById('sendChatButton').disabled = true;
+
+            const response = await chatApiRequest('/send', {
+                method: 'POST',
+                body: JSON.stringify({
+                    requestId: currentChatRequestId,
+                    text: text
+                })
+            });
+
+            if (response) {
+                // Clear input
+                input.value = '';
+                autoResizeChat(input);
+
+                // Manual refresh o'rniga faqat yangi xabarni qo'shamiz
+                showNotification('Xabar yuborildi!', 'success');
+
+                // Optionally auto-refresh after sending
+                await refreshChatMessages();
+            }
+
+        } catch (error) {
+            console.error('Error sending message:', error);
+            showNotification(`Xabar yuborishda xatolik: ${error.message}`, 'error');
+        } finally {
+            // Re-enable input
+            updateChatInputState();
+        }
+    }
+
+    function handleChatKeyDown(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendChatMessage();
+        }
+    }
+
+    function autoResizeChat(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+
+    function formatMessageTime(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+
+        if (diffMins < 1) return 'Hozir';
+        if (diffMins < 60) return `${diffMins} daqiqa oldin`;
+        if (diffHours < 24) return `${diffHours} soat oldin`;
+
+        return date.toLocaleDateString('uz-UZ', {
+            day: 'numeric',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Select Request for Feedback
+    function selectRequestForFeedback(requestId, ustaId, requestName) {
+        // Remove previous selection
+        document.querySelectorAll('.completed-request-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+
+        // Add selection to clicked item
+        event.currentTarget.classList.add('selected');
+
+        // Set hidden fields
+        document.getElementById('selectedRequestId').value = requestId;
+        document.getElementById('selectedUstaId').value = ustaId;
+
+        // Show feedback form
+        document.getElementById('feedbackForm').style.display = 'block';
+
+        selectedRequestForFeedback = { requestId, ustaId, requestName };
+
+        showNotification(`"${requestName}" so'rovi tanlandi`, 'info');
+    }
+
+    // Submit Feedback
+    async function handleSubmitFeedback(event) {
+        event.preventDefault();
+
+        if (!selectedRequestForFeedback) {
+            showNotification('Iltimos, so\'rov tanlang!', 'error');
+            return;
+        }
+
+        const formData = {
+            requestId: document.getElementById('selectedRequestId').value,
+            rating: parseInt(document.getElementById('rating').value),
+            comment: document.getElementById('comment').value
+        };
+
+        if (!formData.rating) {
+            showNotification('Iltimos, baho bering!', 'error');
+            return;
+        }
+
+        try {
+            showLoading('feedbackForm');
+            await apiRequest('/feedback', {
+                method: 'POST',
+                body: JSON.stringify(formData)
+            });
+
+            showNotification('Baholash muvaffaqiyatli yuborildi!', 'success');
+            document.getElementById('feedbackForm').reset();
+            document.getElementById('feedbackForm').style.display = 'none';
+
+            // Reset rating stars
+            document.querySelectorAll('.star').forEach(star => {
+                star.classList.remove('active');
+                star.style.color = '#e2e8f0';
+            });
+
+            // Remove selection
+            document.querySelectorAll('.completed-request-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            selectedRequestForFeedback = null;
+
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+        } finally {
+            hideLoading('feedbackForm');
+        }
+    }
+
+    // Update Profile
+    async function handleUpdateProfile(event) {
+        event.preventDefault();
+
+        const formData = {
+            fullname: document.getElementById('updateFullname').value,
+            username: document.getElementById('updateUsername').value,
+            email: document.getElementById('updateEmail').value
+        };
+
+        try {
+            showLoading('updateProfileForm');
+            await apiRequest('/profile/update', {
+                method: 'PUT',
+                body: JSON.stringify(formData)
+            });
+
+            showNotification('Profil muvaffaqiyatli yangilandi!', 'success');
+
+            // Update current user data
+            currentUser = { ...currentUser, ...formData };
+            localStorage.setItem('user', JSON.stringify(currentUser));
+
+            // Update header display
+            document.getElementById('userName').textContent = formData.fullname;
+            document.getElementById('userAvatar').textContent = formData.fullname.charAt(0).toUpperCase();
+
+            // Update profile display
+            loadProfile();
+
+        } catch (error) {
+            console.error('Error updating profile:', error);
+        } finally {
+            hideLoading('updateProfileForm');
+        }
+    }
+
+    // Change Password
+    async function handleChangePassword(event) {
+        event.preventDefault();
+
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (newPassword !== confirmPassword) {
+            showNotification('Yangi parollar mos kelmaydi!', 'error');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            showNotification('Yangi parol kamida 6 ta belgidan iborat bo\'lishi kerak!', 'error');
+            return;
+        }
+
+        const formData = {
+            currentPassword,
+            newPassword
+        };
+
+        try {
+            showLoading('changePasswordForm');
+            await apiRequest('/profile/change-password', {
+                method: 'PUT',
+                body: JSON.stringify(formData)
+            });
+
+            showNotification('Parol muvaffaqiyatli o\'zgartirildi!', 'success');
+            document.getElementById('changePasswordForm').reset();
+
+        } catch (error) {
+            console.error('Error changing password:', error);
+        } finally {
+            hideLoading('changePasswordForm');
+        }
+    }
+
+    // Utility Functions
+    function formatDate(dateString) {
+        if (!dateString) return 'Noma\'lum';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('uz-UZ', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function getStatusText(status) {
+        const statusMap = {
+            'pending': 'KUTILMOQDA',
+            'waiting': 'KUTILMOQDA',
+            'confirmed': 'TASDIQLANGAN',
+            'in_progress': 'JARAYONDA',
+            'completed': 'TUGALLANGAN',
+            'cancelled': 'BEKOR QILINGAN'
+        };
+        return statusMap[status] || 'NOMA\'LUM';
+    }
+
+    function showLoading(formId) {
+        const form = document.getElementById(formId);
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...';
+            submitBtn.dataset.originalText = originalText;
+        }
+    }
+
+    function hideLoading(formId) {
+        const form = document.getElementById(formId);
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            const originalText = submitBtn.dataset.originalText;
+            if (originalText) {
+                submitBtn.innerHTML = originalText;
+            }
+        }
+    }
+
+    function showNotification(message, type = 'info') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 4000);
+    }
+
+    function showConfirm(title, message, callback) {
+        document.getElementById('confirmMessage').textContent = message;
+        const modal = document.getElementById('confirmModal');
+        const confirmBtn = document.getElementById('confirmAction');
+
+        // Remove previous event listeners
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+        // Add new event listener
+        newConfirmBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            callback();
+        });
+
+        modal.style.display = 'block';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    function logout() {
+        showConfirm(
+            'Chiqish',
+            'Haqiqatan ham tizimdan chiqmoqchimisiz?',
+            () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userId');
+                showNotification('Tizimdan muvaffaqiyatli chiqdingiz!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            }
+        );
+    }
+</script>
+</body>
+</html>

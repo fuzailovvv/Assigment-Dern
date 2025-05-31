@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Dern-Support</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #2d3748;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .user-avatar:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            min-width: 180px;
+            display: none;
+            z-index: 1001;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .user-dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .user-dropdown-item:hover {
+            background: #f7fafc;
+        }
+
+        .user-dropdown-item:last-child {
+            border-top: 1px solid #e2e8f0;
+            color: #e53e3e;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0;
+        }
+
+        .nav-tabs .container {
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #718096;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: #4a5568;
+            background-color: #f7fafc;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background-color: #f7fafc;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Cards */
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-header {
+            background: #f7fafc;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .section-body {
+            padding: 1.5rem;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        /* User Avatar in Table */
+        .user-table-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        /* Role Badges */
+        .role-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .role-admin {
+            background: #fed7d7;
+            color: #e53e3e;
+            border: 1px solid #feb2b2;
+        }
+
+        .role-usta {
+            background: #f0fff4;
+            color: #38a169;
+            border: 1px solid #9ae6b4;
+        }
+
+        .role-user {
+            background: #ebf8ff;
+            color: #3182ce;
+            border: 1px solid #90cdf4;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-eligible {
+            background: #f0fff4;
+            color: #38a169;
+            border: 1px solid #9ae6b4;
+        }
+
+        .status-not-eligible {
+            background: #fed7d7;
+            color: #e53e3e;
+            border: 1px solid #feb2b2;
+        }
+
+        .status-has-requests {
+            background: #fef5e7;
+            color: #d69e2e;
+            border: 1px solid #f6e05e;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            font-family: inherit;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            border: 1px solid #667eea;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #4a5568;
+        }
+
+        .btn-success {
+            background: #38a169;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #2f855a;
+        }
+
+        .btn-warning {
+            background: #d69e2e;
+            color: white;
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            background: #b7791f;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #c53030;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-info {
+            background: #3182ce;
+            color: white;
+        }
+
+        .btn-info:hover:not(:disabled) {
+            background: #2c5282;
+        }
+
+        /* Top Ustas */
+        .usta-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #f7fafc;
+            transition: background-color 0.2s ease;
+        }
+
+        .usta-item:hover {
+            background: #f7fafc;
+        }
+
+        .usta-item:last-child {
+            border-bottom: none;
+        }
+
+        .usta-rank {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .usta-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .usta-info {
+            flex: 1;
+        }
+
+        .usta-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            color: #2d3748;
+        }
+
+        .usta-stats {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .usta-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.1rem;
+        }
+
+        .star {
+            color: #f6e05e;
+            font-size: 0.8rem;
+        }
+
+        .star-empty {
+            color: #e2e8f0;
+            font-size: 0.8rem;
+        }
+
+        .rating-number {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* Loading & Empty States */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #718096;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #e2e8f0;
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        .empty-state p {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 20px 25px rgba(0,0,0,0.3);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f7fafc;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .close {
+            color: #a0aec0;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #2d3748;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            background: #f7fafc;
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* User Details Modal */
+        .user-detail-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .user-detail-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .user-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-detail-item {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .user-detail-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-detail-label {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .warning-box {
+            background: #fef5e7;
+            border: 1px solid #f6e05e;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .warning-title {
+            color: #d69e2e;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .warning-text {
+            color: #744210;
+            font-size: 0.9rem;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            font-size: 0.9rem;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #38a169;
+        }
+
+        .notification.error {
+            background: #e53e3e;
+        }
+
+        .notification.info {
+            background: #3182ce;
+        }
+
+        .notification.warning {
+            background: #d69e2e;
+        }
+
+        /* Search */
+        .search-container {
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 300px;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .nav-tabs .container {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 100px;
+                justify-content: center;
+                padding: 0.75rem 1rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .table-container {
+                font-size: 0.8rem;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section-body {
+                padding: 1rem;
+            }
+
+            .main {
+                padding: 1rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+    <div class="container">
+        <div class="header-content">
+            <h1>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+                Admin Panel - Dern-Support
+            </h1>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar" onclick="toggleUserDropdown()">A</div>
+                <span id="userName">Admin</span>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-dropdown-item" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Chiqish
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Navigation -->
+<nav class="nav-tabs">
+    <div class="container">
+        <button class="tab-btn active" onclick="showTab('dashboard')">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </button>
+        <button class="tab-btn" onclick="showTab('users')">
+            <i class="fas fa-users"></i> Foydalanuvchilar
+        </button>
+        <button class="tab-btn" onclick="showTab('top-ustas')">
+            <i class="fas fa-star"></i> Top Ustalar
+        </button>
+        <button class="tab-btn" onclick="showTab('statistics')">
+            <i class="fas fa-chart-bar"></i> Statistika
+        </button>
+    </div>
+</nav>
+
+<main class="main">
+    <div class="container">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Jami Foydalanuvchilar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="totalRequests">0</div>
+                    <div class="stat-label">Jami So'rovlar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="totalMails">0</div>
+                    <div class="stat-label">Jami Takliflar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number" id="totalFeedbacks">0</div>
+                    <div class="stat-label">Jami Baholar</div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-line"></i> Tizim Holati
+                    </h2>
+                    <button class="btn btn-secondary btn-sm" onclick="loadDashboard()">
+                        <i class="fas fa-sync-alt"></i> Yangilash
+                    </button>
+                </div>
+                <div class="section-body">
+                    <div id="systemStatus">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users" class="tab-content">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-users"></i> Foydalanuvchilar Boshqaruvi
+                    </h2>
+                    <button class="btn btn-secondary btn-sm" onclick="loadUsers()">
+                        <i class="fas fa-sync-alt"></i> Yangilash
+                    </button>
+                </div>
+                <div class="section-body">
+                    <div class="search-container">
+                        <input type="text" class="search-input" id="userSearch" placeholder="Foydalanuvchi qidirish..." onkeyup="filterUsers()">
+                    </div>
+                    <div class="table-container">
+                        <table class="table" id="usersTable">
+                            <thead>
+                            <tr>
+                                <th>Foydalanuvchi</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>So'rovlar</th>
+                                <th>Holat</th>
+                                <th>Ro'yxatdan o'tgan</th>
+                                <th>Amallar</th>
+                            </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="7">
+                                    <div class="loading">
+                                        <i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Ustas Tab -->
+        <div id="top-ustas" class="tab-content">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-trophy"></i> Eng Yaxshi Ustalar
+                    </h2>
+                    <button class="btn btn-secondary btn-sm" onclick="loadTopUstas()">
+                        <i class="fas fa-sync-alt"></i> Yangilash
+                    </button>
+                </div>
+                <div class="section-body">
+                    <div id="topUstasContainer">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="statistics" class="tab-content">
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-bar"></i> Batafsil Statistika
+                    </h2>
+                    <button class="btn btn-secondary btn-sm" onclick="loadStatistics()">
+                        <i class="fas fa-sync-alt"></i> Yangilash
+                    </button>
+                </div>
+                <div class="section-body">
+                    <div id="statisticsContainer">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- User Details Modal -->
+<div id="userDetailsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Foydalanuvchi Ma'lumotlari</h3>
+            <span class="close" onclick="closeModal('userDetailsModal')">&times;</span>
+        </div>
+        <div class="modal-body" id="userDetailsBody">
+            <!-- User details will be loaded here -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('userDetailsModal')">Yopish</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Modal -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Tasdiqlash</h3>
+            <span class="close" onclick="closeModal('confirmModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p id="confirmMessage">Ushbu amalni bajarishni xohlaysizmi?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('confirmModal')">Bekor qilish</button>
+            <button class="btn btn-primary" id="confirmAction">Tasdiqlash</button>
+        </div>
+    </div>
+</div>
+
+<!-- Alert Modal -->
+<div id="alertModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="alertTitle">Xabar</h3>
+            <span class="close" onclick="closeModal('alertModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p id="alertMessage"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="closeModal('alertModal')">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- Notification -->
+<div id="notification" class="notification"></div>
+
+<script>
+    // API Base URL - Change this to your actual backend URL
+    const API_BASE = 'http://localhost:5000/api/admin';
+
+    // Auth token
+    let authToken = localStorage.getItem('token') || '';
+
+    // Current user data
+    let currentUser = null;
+    let allUsers = [];
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeApp();
+        setupEventListeners();
+        loadDashboard();
+    });
+
+    function initializeApp() {
+        // Check if user is authenticated
+        if (!authToken) {
+            showNotification('Iltimos, tizimga kiring!', 'error');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+            return;
+        }
+
+        // Check if user role is admin
+        const userRole = localStorage.getItem('userRole');
+        if (userRole !== 'admin') {
+            showNotification('Siz admin emassiz!', 'error');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+            return;
+        }
+
+        // Load user info
+        loadUserInfo();
+    }
+
+    function setupEventListeners() {
+        // Modal close events
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.user-info')) {
+                document.getElementById('userDropdown').classList.remove('show');
+            }
+        });
+    }
+
+    // Tab functionality
+    function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName).classList.add('active');
+
+        // Add active class to clicked button
+        document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+
+        // Close user dropdown
+        document.getElementById('userDropdown').classList.remove('show');
+
+        // Load data for specific tabs
+        if (tabName === 'dashboard') {
+            loadDashboard();
+        } else if (tabName === 'users') {
+            loadUsers();
+        } else if (tabName === 'top-ustas') {
+            loadTopUstas();
+        } else if (tabName === 'statistics') {
+            loadStatistics();
+        }
+    }
+
+    function toggleUserDropdown() {
+        document.getElementById('userDropdown').classList.toggle('show');
+    }
+
+    // API Functions
+    async function apiRequest(endpoint, options = {}) {
+        const url = `${API_BASE}${endpoint}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`,
+                ...options.headers
+            },
+            ...options
+        };
+
+        try {
+            const response = await fetch(url, config);
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // Token expired
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    showNotification('Sessiya muddati tugagan. Qayta kiring.', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.msg || `HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('API Error:', error);
+            showNotification(error.message || 'Serverda xatolik yuz berdi', 'error');
+            throw error;
+        }
+    }
+
+    // Load user info
+    async function loadUserInfo() {
+        try {
+            // For admin, we'll use cached user info or set default
+            const cachedUser = localStorage.getItem('user');
+            if (cachedUser) {
+                const userInfo = JSON.parse(cachedUser);
+                document.getElementById('userName').textContent = userInfo.fullname || 'Admin';
+                document.getElementById('userAvatar').textContent = (userInfo.fullname || 'A').charAt(0).toUpperCase();
+                currentUser = userInfo;
+            } else {
+                document.getElementById('userName').textContent = 'Admin';
+                document.getElementById('userAvatar').textContent = 'A';
+            }
+        } catch (error) {
+            console.error('Error loading user info:', error);
+        }
+    }
+
+    // Load Dashboard
+    async function loadDashboard() {
+        try {
+            const stats = await apiRequest('/stats');
+
+            // Update stats display
+            document.getElementById('totalUsers').textContent = stats.userCount || 0;
+            document.getElementById('totalRequests').textContent = stats.requestCount || 0;
+            document.getElementById('totalMails').textContent = stats.mailCount || 0;
+            document.getElementById('totalFeedbacks').textContent = stats.feedbackCount || 0;
+
+            // Load system status
+            loadSystemStatus(stats);
+
+        } catch (error) {
+            console.error('Error loading dashboard:', error);
+            document.getElementById('systemStatus').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Ma'lumotlarni yuklashda xatolik</h3>
+                        <p>Iltimos, qayta urinib ko'ring</p>
+                    </div>
+                `;
+        }
+    }
+
+    function loadSystemStatus(stats) {
+        const container = document.getElementById('systemStatus');
+
+        container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="text-align: center; padding: 1rem; background: #f0fff4; border-radius: 8px; border-left: 4px solid #38a169;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #38a169;">${stats.userCount}</div>
+                        <div style="color: #718096; font-size: 0.9rem;">Ro'yxatdan o'tgan foydalanuvchilar</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #ebf8ff; border-radius: 8px; border-left: 4px solid #3182ce;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #3182ce;">${stats.requestCount}</div>
+                        <div style="color: #718096; font-size: 0.9rem;">Yaratilgan so'rovlar</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #fef5e7; border-radius: 8px; border-left: 4px solid #d69e2e;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #d69e2e;">${stats.mailCount}</div>
+                        <div style="color: #718096; font-size: 0.9rem;">Yuborilgan takliflar</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: #fed7d7; border-radius: 8px; border-left: 4px solid #e53e3e;">
+                        <div style="font-size: 1.5rem; font-weight: 600; color: #e53e3e;">${stats.feedbackCount}</div>
+                        <div style="color: #718096; font-size: 0.9rem;">Berilgan baholar</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; padding: 1rem; background: #f7fafc; border-radius: 8px;">
+                    <h4 style="margin-bottom: 0.5rem; color: #2d3748;">Tizim Holati</h4>
+                    <p style="color: #718096; font-size: 0.9rem; margin-bottom: 0;">
+                        Tizim normal ishlayapti. Barcha xizmatlar faol.
+                    </p>
+                </div>
+            `;
+    }
+
+    // Load Users
+    async function loadUsers() {
+        const container = document.getElementById('usersTableBody');
+        container.innerHTML = '<tr><td colspan="7"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</div></td></tr>';
+
+        try {
+            const users = await apiRequest('/users');
+            allUsers = users;
+
+            if (!users || users.length === 0) {
+                container.innerHTML = `
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <i class="fas fa-users"></i>
+                                    <h3>Foydalanuvchilar topilmadi</h3>
+                                    <p>Hali hech qanday foydalanuvchi ro'yxatdan o'tmagan</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                return;
+            }
+
+            renderUsers(users);
+
+        } catch (error) {
+            container.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h3>Xatolik yuz berdi</h3>
+                                <p>Foydalanuvchilarni yuklashda xatolik yuz berdi</p>
+                                <button class="btn btn-primary" onclick="loadUsers()">
+                                    <i class="fas fa-sync-alt"></i> Qayta urinish
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+        }
+    }
+
+    function renderUsers(users) {
+        const container = document.getElementById('usersTableBody');
+
+        container.innerHTML = users.map(user => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div class="user-table-avatar">
+                                ${(user.fullname || 'U').charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">${user.fullname || 'Noma\'lum'}</div>
+                                <div style="font-size: 0.8rem; color: #718096;">@${user.username || 'username'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.email || 'Email ko\'rsatilmagan'}</td>
+                    <td>
+                        <span class="role-badge role-${user.role}">
+                            ${getRoleText(user.role)}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.9rem;">
+                            <div>Jami: <strong>${user.requestCount || 0}</strong></div>
+                            <div style="color: #d69e2e;">Faol: <strong>${user.activeRequestCount || 0}</strong></div>
+                        </div>
+                    </td>
+                    <td>
+                        ${getEligibilityBadge(user)}
+                    </td>
+                    <td>${formatDate(user.createdAt)}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn btn-info btn-sm" onclick="showUserDetails('${user._id}')">
+                                <i class="fas fa-eye"></i> Ko'rish
+                            </button>
+                            ${user.role !== 'usta' && user.role !== 'admin' && user.canMakeUsta ? `
+                                <button class="btn btn-success btn-sm" onclick="makeUsta('${user._id}', '${user.fullname}')">
+                                    <i class="fas fa-user-cog"></i> Usta qilish
+                                </button>
+                            ` : ''}
+                            ${user.role !== 'admin' ? `
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser('${user._id}', '${user.fullname}')">
+                                    <i class="fas fa-trash"></i> O'chirish
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+    }
+
+    function getEligibilityBadge(user) {
+        if (user.role === 'admin') {
+            return '<span class="status-badge role-admin">ADMIN</span>';
+        } else if (user.role === 'usta') {
+            return '<span class="status-badge role-usta">USTA</span>';
+        } else if (user.canMakeUsta) {
+            return '<span class="status-badge status-eligible">Usta qilish mumkin</span>';
+        } else if (user.requestCount > 0) {
+            return '<span class="status-badge status-has-requests">So\'rovlari bor</span>';
+        } else {
+            return '<span class="status-badge status-not-eligible">Tekshirilmagan</span>';
+        }
+    }
+
+    function filterUsers() {
+        const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+        const filteredUsers = allUsers.filter(user =>
+            (user.fullname || '').toLowerCase().includes(searchTerm) ||
+            (user.username || '').toLowerCase().includes(searchTerm) ||
+            (user.email || '').toLowerCase().includes(searchTerm)
+        );
+        renderUsers(filteredUsers);
+    }
+
+    // Show User Details
+    async function showUserDetails(userId) {
+        try {
+            const userDetails = await apiRequest(`/users/${userId}/details`);
+
+            const modalBody = document.getElementById('userDetailsBody');
+            modalBody.innerHTML = `
+                    <div class="user-detail-section">
+                        <h4 class="user-detail-title">Asosiy Ma'lumotlar</h4>
+                        <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <div><strong>Ism:</strong> ${userDetails.user.fullname}</div>
+                            <div><strong>Email:</strong> ${userDetails.user.email}</div>
+                            <div><strong>Username:</strong> ${userDetails.user.username}</div>
+                            <div><strong>Rol:</strong> ${getRoleText(userDetails.user.role)}</div>
+                            <div><strong>Ro'yxatdan o'tgan:</strong> ${formatDate(userDetails.user.createdAt)}</div>
+                        </div>
+                    </div>
+
+                    <div class="user-detail-section">
+                        <h4 class="user-detail-title">Statistika</h4>
+                        <div class="user-detail-grid">
+                            <div class="user-detail-item">
+                                <div class="user-detail-number">${userDetails.stats.requestCount}</div>
+                                <div class="user-detail-label">Jami So'rovlar</div>
+                            </div>
+                            <div class="user-detail-item">
+                                <div class="user-detail-number">${userDetails.stats.activeRequestCount}</div>
+                                <div class="user-detail-label">Faol So'rovlar</div>
+                            </div>
+                            <div class="user-detail-item">
+                                <div class="user-detail-number">${userDetails.stats.sentOffersCount}</div>
+                                <div class="user-detail-label">Yuborgan Takliflar</div>
+                            </div>
+                            <div class="user-detail-item">
+                                <div class="user-detail-number">${userDetails.stats.receivedOffersCount}</div>
+                                <div class="user-detail-label">Olgan Takliflar</div>
+                            </div>
+                            <div class="user-detail-item">
+                                <div class="user-detail-number">${userDetails.stats.givenFeedbacksCount}</div>
+                                <div class="user-detail-label">Bergan Baholar</div>
+                            </div>
+                            <div class="user-detail-item">
+                                <div class="user-detail-number">${userDetails.stats.receivedFeedbacksCount}</div>
+                                <div class="user-detail-label">Olgan Baholar</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${!userDetails.stats.canMakeUsta && userDetails.user.role === 'user' ? `
+                        <div class="warning-box">
+                            <div class="warning-title">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Usta qilish mumkin emas
+                            </div>
+                            <div class="warning-text">
+                                Bu foydalanuvchini usta qilish mumkin emas, chunki uning so'rovlar tarixi mavjud.
+                                Faqat yangi foydalanuvchilarni (hech qanday so'rov yaratmagan) usta qilish mumkin.
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${userDetails.stats.canMakeUsta ? `
+                        <div style="background: #f0fff4; border: 1px solid #9ae6b4; border-radius: 8px; padding: 1rem; margin: 1rem 0;">
+                            <div style="color: #38a169; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-check-circle"></i>
+                                Usta qilish mumkin
+                            </div>
+                            <div style="color: #2f855a; font-size: 0.9rem;">
+                                Bu foydalanuvchi yangi va hech qanday so'rov yaratmagan. Uni usta qilish mumkin.
+                            </div>
+                        </div>
+                    ` : ''}
+                `;
+
+            document.getElementById('userDetailsModal').style.display = 'block';
+
+        } catch (error) {
+            console.error('Error loading user details:', error);
+            showNotification('Foydalanuvchi ma\'lumotlarini yuklashda xatolik', 'error');
+        }
+    }
+
+    // Load Top Ustas
+    async function loadTopUstas() {
+        const container = document.getElementById('topUstasContainer');
+        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</div>';
+
+        try {
+            const topUstas = await apiRequest('/top-rated-ustas');
+
+            if (!topUstas || topUstas.length === 0) {
+                container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-star"></i>
+                            <h3>Top ustalar topilmadi</h3>
+                            <p>Hali hech qanday usta baholanmagan</p>
+                        </div>
+                    `;
+                return;
+            }
+
+            container.innerHTML = topUstas.map((usta, index) => `
+                    <div class="usta-item">
+                        <div class="usta-rank">${index + 1}</div>
+                        <div class="usta-avatar">
+                            ${(usta.fullname || 'U').charAt(0).toUpperCase()}
+                        </div>
+                        <div class="usta-info">
+                            <div class="usta-name">${usta.fullname || 'Noma\'lum Usta'}</div>
+                            <div class="usta-stats">${usta.feedbackCount} ta baholash</div>
+                        </div>
+                        <div class="usta-rating">
+                            <div class="rating-stars">
+                                ${generateStars(usta.avgRating)}
+                            </div>
+                            <span class="rating-number">${usta.avgRating.toFixed(1)}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+        } catch (error) {
+            container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Xatolik yuz berdi</h3>
+                        <p>Top ustalarni yuklashda xatolik yuz berdi</p>
+                        <button class="btn btn-primary" onclick="loadTopUstas()">
+                            <i class="fas fa-sync-alt"></i> Qayta urinish
+                        </button>
+                    </div>
+                `;
+        }
+    }
+
+    // Load Statistics
+    async function loadStatistics() {
+        const container = document.getElementById('statisticsContainer');
+        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Yuklanmoqda...</div>';
+
+        try {
+            const stats = await apiRequest('/stats');
+
+            container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #667eea;">
+                            <h4 style="margin-bottom: 1rem; color: #2d3748;">Foydalanuvchilar</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: #667eea; margin-bottom: 0.5rem;">${stats.userCount}</div>
+                            <p style="color: #718096; font-size: 0.9rem;">Jami ro'yxatdan o'tgan foydalanuvchilar soni</p>
+                        </div>
+
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #38a169;">
+                            <h4 style="margin-bottom: 1rem; color: #2d3748;">So'rovlar</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: #38a169; margin-bottom: 0.5rem;">${stats.requestCount}</div>
+                            <p style="color: #718096; font-size: 0.9rem;">Yaratilgan xizmat so'rovlari soni</p>
+                        </div>
+
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #d69e2e;">
+                            <h4 style="margin-bottom: 1rem; color: #2d3748;">Takliflar</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: #d69e2e; margin-bottom: 0.5rem;">${stats.mailCount}</div>
+                            <p style="color: #718096; font-size: 0.9rem;">Ustalar tomonidan yuborilgan takliflar</p>
+                        </div>
+
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #e53e3e;">
+                            <h4 style="margin-bottom: 1rem; color: #2d3748;">Baholar</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: #e53e3e; margin-bottom: 0.5rem;">${stats.feedbackCount}</div>
+                            <p style="color: #718096; font-size: 0.9rem;">Mijozlar tomonidan berilgan baholar</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem; background: #f7fafc; padding: 1.5rem; border-radius: 8px;">
+                        <h4 style="margin-bottom: 1rem; color: #2d3748;">Tizim Tahlili</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: 600; color: #2d3748;">
+                                    ${stats.requestCount > 0 ? ((stats.mailCount / stats.requestCount) * 100).toFixed(1) : 0}%
+                                </div>
+                                <div style="color: #718096; font-size: 0.8rem;">So'rovlarga taklif kelish foizi</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: 600; color: #2d3748;">
+                                    ${stats.mailCount > 0 ? ((stats.feedbackCount / stats.mailCount) * 100).toFixed(1) : 0}%
+                                </div>
+                                <div style="color: #718096; font-size: 0.8rem;">Takliflarga baho berilish foizi</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: 600; color: #2d3748;">
+                                    ${stats.userCount > 0 ? ((stats.requestCount / stats.userCount)).toFixed(1) : 0}
+                                </div>
+                                <div style="color: #718096; font-size: 0.8rem;">Har bir foydalanuvchi uchun o'rtacha so'rov</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+        } catch (error) {
+            container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Xatolik yuz berdi</h3>
+                        <p>Statistikani yuklashda xatolik yuz berdi</p>
+                        <button class="btn btn-primary" onclick="loadStatistics()">
+                            <i class="fas fa-sync-alt"></i> Qayta urinish
+                        </button>
+                    </div>
+                `;
+        }
+    }
+
+    // Make User Usta
+    async function makeUsta(userId, userName) {
+        showConfirm(
+            'Usta qilish',
+            `${userName} foydalanuvchisini usta qilishni xohlaysizmi? Bu amal faqat yangi foydalanuvchilar uchun mumkin.`,
+            async () => {
+                try {
+                    await apiRequest(`/users/${userId}/make-usta`, {
+                        method: 'PUT'
+                    });
+
+                    showNotification('Foydalanuvchi muvaffaqiyatli usta qilindi!', 'success');
+                    loadUsers(); // Refresh users list
+                    loadDashboard(); // Refresh stats
+
+                } catch (error) {
+                    console.error('Error making user usta:', error);
+                    if (error.message.includes('faol so\'rovlari mavjud')) {
+                        showNotification('Xatolik: Foydalanuvchining faol so\'rovlari mavjud!', 'warning');
+                    } else if (error.message.includes('so\'rovlar tarixi mavjud')) {
+                        showNotification('Xatolik: Foydalanuvchining so\'rovlar tarixi mavjud!', 'warning');
+                    } else {
+                        showNotification('Foydalanuvchini usta qilishda xatolik yuz berdi!', 'error');
+                    }
+                }
+            }
+        );
+    }
+
+    // Delete User
+    async function deleteUser(userId, userName) {
+        showConfirm(
+            'Foydalanuvchini o\'chirish',
+            `${userName} foydalanuvchisini va unga tegishli barcha ma'lumotlarni o'chirishni xohlaysizmi? Bu amalni bekor qilib bo'lmaydi.`,
+            async () => {
+                try {
+                    await apiRequest(`/users/${userId}`, {
+                        method: 'DELETE'
+                    });
+
+                    showNotification('Foydalanuvchi muvaffaqiyatli o\'chirildi!', 'success');
+                    loadUsers(); // Refresh users list
+                    loadDashboard(); // Refresh stats
+
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                }
+            }
+        );
+    }
+
+    // Utility Functions
+    function formatDate(dateString) {
+        if (!dateString) return 'Noma\'lum';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('uz-UZ', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    function getRoleText(role) {
+        const roleMap = {
+            'admin': 'ADMIN',
+            'usta': 'USTA',
+            'user': 'FOYDALANUVCHI'
+        };
+        return roleMap[role] || 'NOMA\'LUM';
+    }
+
+    function generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+        let stars = '';
+
+        // Full stars
+        for (let i = 0; i < fullStars; i++) {
+            stars += '<i class="fas fa-star star"></i>';
+        }
+
+        // Half star
+        if (hasHalfStar) {
+            stars += '<i class="fas fa-star-half-alt star"></i>';
+        }
+
+        // Empty stars
+        for (let i = 0; i < emptyStars; i++) {
+            stars += '<i class="far fa-star star-empty"></i>';
+        }
+
+        return stars;
+    }
+
+    function showNotification(message, type = 'info') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 4000);
+    }
+
+    function showConfirm(title, message, callback) {
+        document.getElementById('confirmMessage').textContent = message;
+        const modal = document.getElementById('confirmModal');
+        const confirmBtn = document.getElementById('confirmAction');
+
+        // Remove previous event listeners
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+        // Add new event listener
+        newConfirmBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            callback();
+        });
+
+        modal.style.display = 'block';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    function logout() {
+        showConfirm(
+            'Chiqish',
+            'Haqiqatan ham tizimdan chiqmoqchimisiz?',
+            () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userId');
+                showNotification('Tizimdan muvaffaqiyatli chiqdingiz!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            }
+        );
+    }
+</script>
+</body>
+</html>

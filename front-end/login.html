@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirish - Dern-Support</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+            border: 1px solid #e9ecef;
+        }
+
+        .login-left {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        .login-right {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: white;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .welcome-text h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .welcome-text p {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+            color: #ecf0f1;
+        }
+
+        .login-form h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .login-form .subtitle {
+            color: #6c757d;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #495057;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background: #fff;
+            color: #495057;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #adb5bd;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0.25rem;
+        }
+
+        .password-toggle:hover {
+            color: #495057;
+        }
+
+        .forgot-password {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-align: right;
+            display: block;
+            margin-bottom: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-button:hover {
+            background: #2980b9;
+        }
+
+        .login-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .signup-link {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .signup-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #ecf0f1;
+        }
+
+        .features-list svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+
+            .login-left {
+                padding: 2rem;
+                min-height: 200px;
+            }
+
+            .login-right {
+                padding: 2rem;
+            }
+
+            .welcome-text h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Loading state */
+        .login-button.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .login-button.loading::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error state */
+        .form-group.error input {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        /* Alert styles */
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.9rem;
+            border: 1px solid;
+        }
+
+        .alert.success {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+
+        .alert.error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        /* Professional styling */
+        .system-info {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.8rem;
+            color: #bdc3c7;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <!-- Left Side - Welcome -->
+    <div class="login-left">
+        <div class="logo">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            Dern-Support
+        </div>
+        <div class="welcome-text">
+            <h2>Tizimga kirish</h2>
+            <p>Professional texnik yordam boshqaruv tizimiga xush kelibsiz. Hisobingizga kirish uchun ma'lumotlaringizni kiriting.</p>
+        </div>
+        <ul class="features-list">
+            <li>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Xavfsiz kirish tizimi
+            </li>
+            <li>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                24/7 texnik yordam
+            </li>
+            <li>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Professional boshqaruv
+            </li>
+        </ul>
+        <div class="system-info">
+            Dern-Support Management System v2.0
+        </div>
+    </div>
+
+    <!-- Right Side - Login Form -->
+    <div class="login-right">
+        <div class="login-form">
+            <h3>Hisobga kirish</h3>
+            <p class="subtitle">Tizimga kirish uchun hisobingiz ma'lumotlarini kiriting</p>
+
+            <div id="alert" class="alert"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Foydalanuvchi nomi</label>
+                    <input type="text" id="username" name="username" placeholder="Foydalanuvchi nomingiz" required>
+                    <div class="error-message">Foydalanuvchi nomi talab qilinadi</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Parol</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" placeholder="Parolingiz" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="error-message">Parol talab qilinadi</div>
+                </div>
+
+                <a href="#" class="forgot-password">Parolni unutdingizmi?</a>
+
+                <button type="submit" class="login-button">
+                    Tizimga kirish
+                </button>
+            </form>
+
+            <div class="signup-link">
+                Hisobingiz yo'qmi? <a href="register.html">Ro'yxatdan o'ting</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_BASE_URL = 'http://localhost:5000/api';
+
+    // Check if user is already logged in
+    window.addEventListener('load', function() {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+        if (token) {
+            window.location.href = 'index.html';
+        }
+    });
+
+    // Password toggle functionality
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2"/>
+                    <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" stroke-width="2"/>
+                `;
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.innerHTML = `
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                `;
+        }
+    }
+
+    // Show alert message
+    function showAlert(message, type) {
+        const alert = document.getElementById('alert');
+        alert.textContent = message;
+        alert.className = `alert ${type} show`;
+
+        setTimeout(() => {
+            alert.classList.remove('show');
+        }, 5000);
+    }
+
+    // Form validation and submission
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username');
+        const password = document.getElementById('password');
+        const loginButton = document.querySelector('.login-button');
+
+        // Reset previous errors
+        document.querySelectorAll('.form-group').forEach(group => {
+            group.classList.remove('error');
+        });
+
+        let isValid = true;
+
+        // Username validation
+        if (username.value.trim().length < 3) {
+            username.closest('.form-group').classList.add('error');
+            isValid = false;
+        }
+
+        // Password validation
+        if (password.value.length < 6) {
+            password.closest('.form-group').classList.add('error');
+            isValid = false;
+        }
+
+        if (isValid) {
+            loginButton.classList.add('loading');
+            loginButton.textContent = 'Kirish';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': '*/*'
+                    },
+                    body: JSON.stringify({
+                        username: username.value.trim(),
+                        password: password.value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Muvaffaqiyatli kirildi', 'success');
+
+                    // Save all user data to localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('userRole', data.user.role); // Save role separately for quick access
+                    localStorage.setItem('loginTime', Date.now().toString());
+
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+
+                } else {
+                    showAlert(data.msg || 'Kirish xatosi', 'error');
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Server bilan bog\'lanishda xatolik', 'error');
+            } finally {
+                loginButton.classList.remove('loading');
+                loginButton.textContent = 'Tizimga kirish';
+            }
+        }
+    });
+
+    // Real-time validation
+    document.getElementById('username').addEventListener('blur', function() {
+        if (this.value.trim().length < 3 && this.value !== '') {
+            this.closest('.form-group').classList.add('error');
+        } else {
+            this.closest('.form-group').classList.remove('error');
+        }
+    });
+
+    document.getElementById('password').addEventListener('blur', function() {
+        if (this.value.length < 6 && this.value !== '') {
+            this.closest('.form-group').classList.add('error');
+        } else {
+            this.closest('.form-group').classList.remove('error');
+        }
+    });
+</script>
+</body>
+</html>
